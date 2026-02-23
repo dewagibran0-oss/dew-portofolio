@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { 
+  LucideIcon,
   ArrowUpRight, Zap, Globe, 
   Code2, Cpu, Rocket, Terminal,
   Workflow, Hash, Layers, Command
@@ -22,7 +23,7 @@ interface Project {
   image: string;
   gridClass: string;
   accent: string;
-  icon: React.ElementType;
+  icon: LucideIcon; // 👈 Ubah ini
 }
 
 const PROJECTS: Project[] = [
@@ -133,8 +134,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
         <div className="flex items-start justify-between">
           <div 
             className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 text-white transition-all duration-500 group-hover:scale-110 group-hover:bg-white group-hover:text-black"
-            style={{ boxShadow: `0 0 20px ${project.accent}20` }}
-          >
+            style={{ boxShadow: `0 0 20px ${project.accent}20` }}>
             <Icon size={24} strokeWidth={1.5} />
           </div>
           <div className="flex flex-col items-end">

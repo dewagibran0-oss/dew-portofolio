@@ -12,7 +12,7 @@ import {
 import { 
   Cpu, Layers, ArrowRight, Database, Zap, 
   ShieldCheck, MousePointer2, X, CheckCircle2,
-  Sparkles, Globe, ZapIcon
+  Sparkles, Globe, ZapIcon, LucideIcon
 } from "lucide-react";
 
 // --- Types ---
@@ -25,12 +25,11 @@ interface Service {
   features: string[];
   tech: string[];
   color: string;
-  icon: React.ElementType;
+  icon: LucideIcon; // 👈 Ubah dari React.ElementType ke LucideIcon
   stats: string;
 }
-
 // --- Animation Constants ---
-const EASE_CUSTOM = [0.16, 1, 0.3, 1];
+const EASE_CUSTOM = [0.16, 1, 0.3, 1] as const;
 
 // --- Sub-Component: Detail Modal ---
 const ServiceModal = ({ service, isOpen, onClose }: { service: Service; isOpen: boolean; onClose: () => void }) => {

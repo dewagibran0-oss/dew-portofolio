@@ -5,22 +5,50 @@ import Link from "next/link";
 import { 
   motion, 
   Variants, 
-  AnimatePresence, 
   useScroll, 
   useTransform,
   useSpring
 } from "framer-motion";
 import { 
   ArrowUp, Github, Linkedin, Twitter, Instagram, 
-  Globe, Zap, Terminal, Command, 
-  ChevronRight, ArrowUpRight, Activity,
-  Server, ShieldCheck, Mail, Database,
-  Monitor, Cpu, Layers
+  Zap, Terminal, ArrowUpRight, 
+  Server, ShieldCheck, Mail, 
+  Cpu, LucideIcon
 } from "lucide-react";
 
 /**
- * --- Configuration & Systems Data ---
- * Struktur data yang modular untuk mempermudah maintenance.
+ * --- 1. Types & Interfaces ---
+ * Mendefinisikan tipe data agar TypeScript mengenali properti opsional.
+ */
+interface NavItem {
+  label: string;
+  href: string;
+  badge?: string;    // Opsional: tidak semua punya badge
+  external?: boolean; // Opsional: tidak semua link eksternal
+}
+
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
+interface SocialItem {
+  id: string;
+  icon: LucideIcon;
+  href: string;
+  label: string;
+  color: string;
+}
+
+interface StatItem {
+  label: string;
+  value: string;
+  icon: LucideIcon;
+  color: string;
+}
+
+/**
+ * --- 2. Configuration Data ---
  */
 const FOOTER_CONFIG = {
   identity: {
@@ -38,7 +66,7 @@ const FOOTER_CONFIG = {
         { label: "System_Log", href: "/changelog" },
         { label: "Knowledge_Base", href: "/docs" },
       ],
-    },
+    } as NavGroup,
     {
       title: "Artifact_Archive",
       items: [
@@ -47,24 +75,24 @@ const FOOTER_CONFIG = {
         { label: "Source_Index", href: "https://github.com", external: true },
         { label: "UI_Components", href: "/components" },
       ],
-    },
+    } as NavGroup,
   ],
   socials: [
     { id: "gh", icon: Github, href: "https://github.com/dewagibran0-oss", label: "Github", color: "hover:bg-white hover:text-black" },
     { id: "li", icon: Linkedin, href: "https://www.linkedin.com/in/dewa-gibran-393b253b2/", label: "LinkedIn", color: "hover:bg-blue-600 hover:text-white" },
     { id: "tw", icon: Twitter, href: "#", label: "X_Corp", color: "hover:bg-zinc-800 hover:text-white" },
     { id: "ig", icon: Instagram, href: "https://www.instagram.com/dwaagbrnn/", label: "Instagram", color: "hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-500 hover:text-white" },
-  ],
+  ] as SocialItem[],
   stats: [
     { label: "System_Status", value: "Operational", icon: ShieldCheck, color: "text-emerald-500" },
     { label: "Server_Region", value: "ID-JKT-01", icon: Server, color: "text-cyan-500" },
     { label: "Active_Load", value: "0.002ms", icon: Zap, color: "text-amber-500" },
-  ]
+  ] as StatItem[]
 };
 
-/**
- * --- Framer Motion Variants ---
- */
+// Penggunaan 'as const' untuk memperbaiki error Easing
+const EASE_CUSTOM = [0.16, 1, 0.3, 1] as const;
+
 const containerVariants: Variants = {
   initial: {},
   animate: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } }
@@ -72,13 +100,13 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   initial: { opacity: 0, y: 15 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+  animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE_CUSTOM } }
 };
 
 /**
- * --- Memoized Sub-Components ---
+ * --- 3. Sub-Components ---
  */
-const SystemBadge = memo(({ label, value, icon: Icon, color }: any) => (
+const SystemBadge = memo(({ label, value, icon: Icon, color }: StatItem) => (
   <div className="flex items-center gap-3 px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-xl hover:bg-white/[0.05] transition-colors group cursor-default">
     <Icon size={14} className={`${color} group-hover:scale-110 transition-transform`} />
     <div className="flex flex-col gap-0.5">
@@ -94,7 +122,6 @@ export default function XSystemsFooterV2() {
   const [mounted, setMounted] = useState(false);
   const { scrollYProgress } = useScroll();
 
-  // Animasi parallax halus untuk background grid
   const yRange = useTransform(scrollYProgress, [0.8, 1], [0, -50]);
   const smoothY = useSpring(yRange, { stiffness: 100, damping: 30 });
 
@@ -116,7 +143,7 @@ export default function XSystemsFooterV2() {
   return (
     <footer className="relative bg-[#050505] pt-32 pb-12 px-8 overflow-hidden border-t border-white/[0.05]">
       
-      {/* --- Background Engineering (Decorative) --- */}
+      {/* Background Grid */}
       <motion.div style={{ y: smoothY }} className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute inset-0 bg-[radial-gradient(#1a1a1a_1px,transparent_1px)] [background-size:40px_40px]" />
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#050505] via-transparent to-[#050505]" />
@@ -124,10 +151,9 @@ export default function XSystemsFooterV2() {
 
       <div className="max-w-[1600px] mx-auto relative z-10">
         
-        {/* --- Upper Footer Grid --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-24 mb-32">
           
-          {/* Brand Identity Section */}
+          {/* Identity */}
           <motion.div 
             className="lg:col-span-4 space-y-10"
             initial="initial" whileInView="animate" variants={containerVariants} viewport={{ once: true }}
@@ -135,7 +161,7 @@ export default function XSystemsFooterV2() {
             <motion.div variants={itemVariants} className="space-y-6">
               <div className="flex flex-col gap-1">
                 <Link href="/" className="inline-block group">
-                  <h2 className="text-5xl font-black tracking-[ -0.05em] text-white">
+                  <h2 className="text-5xl font-black tracking-[-0.05em] text-white">
                     {FOOTER_CONFIG.identity.brand}
                     <span className="text-cyan-500 group-hover:text-purple-500 transition-colors duration-500">
                       {FOOTER_CONFIG.identity.dot}
@@ -161,7 +187,7 @@ export default function XSystemsFooterV2() {
             </motion.div>
           </motion.div>
 
-          {/* Navigation Links Grid */}
+          {/* Links */}
           <div className="lg:col-span-4 grid grid-cols-2 gap-8">
             {FOOTER_CONFIG.links.map((group) => (
               <motion.div 
@@ -198,7 +224,7 @@ export default function XSystemsFooterV2() {
             ))}
           </div>
 
-          {/* Communication & CTA Section */}
+          {/* Communication */}
           <motion.div 
             className="lg:col-span-4 flex flex-col items-start lg:items-end gap-10"
             initial="initial" whileInView="animate" variants={containerVariants} viewport={{ once: true }}
@@ -209,7 +235,6 @@ export default function XSystemsFooterV2() {
                 <div className="absolute top-0 right-0 p-4 opacity-5 translate-x-4 -translate-y-4">
                   <Mail size={120} />
                 </div>
-                
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 text-cyan-500">
                     <Terminal size={20} />
@@ -220,7 +245,6 @@ export default function XSystemsFooterV2() {
                     Buka protokol komunikasi dan mari kita bangun sesuatu yang revolusioner bersama.
                   </p>
                 </div>
-
                 <Link 
                   href="mailto:contact@dewagibran.dev"
                   className="group flex items-center justify-center gap-3 w-full py-4 bg-white text-black rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-cyan-500 transition-all active:scale-95"
@@ -230,27 +254,29 @@ export default function XSystemsFooterV2() {
               </div>
             </motion.div>
 
-            {/* Social Icons Stack */}
+            {/* Social Icons */}
             <motion.div variants={itemVariants} className="flex gap-4">
-              {FOOTER_CONFIG.socials.map((social) => (
-                <Link 
-                  key={social.id} 
-                  href={social.href}
-                  className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-white/[0.03] border border-white/[0.08] text-zinc-500 transition-all duration-300 ${social.color} hover:border-transparent hover:-translate-y-2`}
-                  aria-label={social.label}
-                >
-                  <social.icon size={22} strokeWidth={1.5} />
-                </Link>
-              ))}
+              {FOOTER_CONFIG.socials.map((social) => {
+                const Icon = social.icon; // Gunakan variabel kapital agar React tidak error
+                return (
+                  <Link 
+                    key={social.id} 
+                    href={social.href}
+                    target="_blank"
+                    className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-white/[0.03] border border-white/[0.08] text-zinc-500 transition-all duration-300 ${social.color} hover:border-transparent hover:-translate-y-2`}
+                    aria-label={social.label}
+                  >
+                    <Icon size={22} strokeWidth={1.5} />
+                  </Link>
+                );
+              })}
             </motion.div>
           </motion.div>
         </div>
 
-        {/* --- Lower Metadata Bar --- */}
+        {/* Bottom Bar */}
         <div className="pt-12 border-t border-white/[0.05] flex flex-col lg:flex-row justify-between items-center gap-12 text-center lg:text-left">
-          
           <div className="flex flex-wrap items-center justify-center lg:justify-start gap-10">
-            {/* Live Clock HUD */}
             <div className="flex items-center gap-4">
               <div className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-20"></span>
@@ -261,10 +287,7 @@ export default function XSystemsFooterV2() {
                 <span className="text-[12px] font-mono text-white tracking-widest tabular-nums">{time} (UTC+7)</span>
               </div>
             </div>
-
             <div className="hidden sm:block h-10 w-px bg-zinc-800/50" />
-
-            {/* Tech Stack Mini Indicator */}
             <div className="flex items-center gap-4">
               <div className="p-2 bg-white/[0.02] rounded-lg border border-white/[0.05]">
                 <Cpu size={14} className="text-zinc-600" />
@@ -290,12 +313,9 @@ export default function XSystemsFooterV2() {
               </button>
             </div>
           </div>
-
         </div>
-
       </div>
 
-      {/* Extreme Bottom Aesthetic */}
       <div className="mt-12 h-1 w-full bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent opacity-20" />
     </footer>
   );
