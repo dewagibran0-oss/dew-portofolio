@@ -2,49 +2,42 @@
 
 import React, { useRef, useMemo } from "react";
 import { motion, useInView, Variants } from "framer-motion";
+import { IconType } from "react-icons"; // 1. Import IconType untuk TS
 import { 
-  SiNextdotjs, SiTypescript, SiReact, SiTailwindcss, SiFramer, 
-  SiNodedotjs, SiPostgresql, SiGraphql, SiPrisma, SiDocker, 
+  SiNextdotjs, SiTypescript, SiReact, SiTailwindcss, 
+  SiNodedotjs, SiPostgresql, SiPrisma, SiDocker, 
   SiGit, SiVercel, SiFigma, SiThreedotjs, SiAdobephotoshop,
-  SiAdobepremierepro, SiCanva, SiPython, SiGo
+  SiAdobepremierepro, SiCanva, SiGo
 } from "react-icons/si";
 
 // --- 1. Types & Data ---
 interface Skill {
   name: string;
-  icon: React.ElementType;
+  icon: IconType; // 2. Gunakan IconType agar TS tahu ini punya props size/className
   category: "frontend" | "backend" | "tools" | "creative";
   level: string;
   color: string;
 }
 
 const SKILLS_DATA: Skill[] = [
-  // Frontend
   { name: "Next.js", icon: SiNextdotjs, category: "frontend", level: "Expert", color: "#ffffff" },
   { name: "TypeScript", icon: SiTypescript, category: "frontend", level: "Expert", color: "#3178c6" },
   { name: "React", icon: SiReact, category: "frontend", level: "Expert", color: "#61dafb" },
   { name: "Three.js", icon: SiThreedotjs, category: "frontend", level: "Advanced", color: "#ffffff" },
   { name: "Tailwind", icon: SiTailwindcss, category: "frontend", level: "Expert", color: "#38bdf8" },
-  
-  // Backend
   { name: "Node.js", icon: SiNodedotjs, category: "backend", level: "Advanced", color: "#339933" },
   { name: "Go", icon: SiGo, category: "backend", level: "Intermediate", color: "#00add8" },
   { name: "Postgres", icon: SiPostgresql, category: "backend", level: "Advanced", color: "#4169e1" },
   { name: "Prisma", icon: SiPrisma, category: "backend", level: "Advanced", color: "#2d3748" },
-  
-  // Tools
   { name: "Docker", icon: SiDocker, category: "tools", level: "Intermediate", color: "#2496ed" },
   { name: "Git", icon: SiGit, category: "tools", level: "Expert", color: "#f05032" },
   { name: "Vercel", icon: SiVercel, category: "tools", level: "Expert", color: "#ffffff" },
-  
-  // Creative & Design (BAHASA NON-PROGRAMMING)
   { name: "Figma", icon: SiFigma, category: "creative", level: "Expert", color: "#f24e1e" },
   { name: "Photoshop", icon: SiAdobephotoshop, category: "creative", level: "Advanced", color: "#31a8ff" },
   { name: "Premiere", icon: SiAdobepremierepro, category: "creative", level: "Advanced", color: "#ea77ff" },
   { name: "Canva", icon: SiCanva, category: "creative", level: "Expert", color: "#00c4cc" },
 ];
 
-// --- 2. Animation Variants ---
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -66,8 +59,7 @@ const cardVariants: Variants = {
 // --- 3. Sub-Components ---
 
 const SkillCard = ({ skill }: { skill: Skill }) => {
-  // 1. Assign ke variabel dengan huruf kapital (Wajib untuk JSX dinamis)
-  const Icon = skill.icon;
+  const Icon = skill.icon; // Huruf kapital wajib untuk komponen
 
   return (
     <motion.div
@@ -75,28 +67,25 @@ const SkillCard = ({ skill }: { skill: Skill }) => {
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       className="group relative h-full"
     >
-      {/* Dynamic Glow Effect */}
       <div 
         className="absolute inset-0 blur-2xl rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" 
         style={{ backgroundColor: skill.color }}
       />
       
       <div className="relative h-full p-6 rounded-2xl border border-white/5 bg-white/[0.03] backdrop-blur-xl flex flex-col items-center md:items-start gap-5 transition-all duration-300 group-hover:border-white/20 group-hover:bg-white/[0.08]">
-        {/* Icon Wrapper */}
         <div 
           className="p-3 rounded-xl bg-white/5 transition-all duration-500 group-hover:scale-110"
           style={{ color: skill.color }}
         >
-          {/* 2. Gunakan variabel Icon di sini */}
           <Icon size={32} />
         </div>
         
         <div className="text-center md:text-left">
-          <h3 className="text-white font-space font-bold tracking-tight text-lg">
+          <h3 className="text-white font-bold tracking-tight text-lg">
             {skill.name}
           </h3>
           <div className="flex items-center gap-2 mt-1">
-            <div className="w-1 h-1 rounded-full bg-secondary animate-pulse" />
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 group-hover:text-gray-300">
               {skill.level}
             </p>
@@ -120,17 +109,20 @@ const MarqueeRow = ({ items, direction = "left", speed = 50 }: { items: Skill[],
     >
       {[...Array(4)].map((_, i) => (
         <div key={`marquee-group-${i}`} className="flex gap-12 items-center">
-          {items.map((skill, idx) => (
-            <div 
-              key={`${skill.name}-${i}-${idx}`} 
-              className="flex items-center gap-4 opacity-20 hover:opacity-100 hover:scale-110 transition-all duration-500 cursor-default"
-            >
-              <skill.icon className="text-3xl md:text-5xl" style={{ color: skill.color }} />
-              <span className="text-3xl md:text-6xl font-space font-black text-white tracking-tighter uppercase italic">
-                {skill.name}
-              </span>
-            </div>
-          ))}
+          {items.map((skill, idx) => {
+            const Icon = skill.icon; // 3. Definisikan Icon di dalam loop
+            return (
+              <div 
+                key={`${skill.name}-${i}-${idx}`} 
+                className="flex items-center gap-4 opacity-20 hover:opacity-100 hover:scale-110 transition-all duration-500 cursor-default"
+              >
+                <Icon className="text-3xl md:text-5xl" style={{ color: skill.color }} />
+                <span className="text-3xl md:text-6xl font-black text-white tracking-tighter uppercase italic">
+                  {skill.name}
+                </span>
+              </div>
+            );
+          })}
         </div>
       ))}
     </motion.div>
@@ -152,13 +144,10 @@ export default function Skills() {
       ref={scrollRef}
       className="relative w-full py-32 overflow-hidden bg-[#020617]"
     >
-      {/* Background Orbs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-6 relative z-20">
-        
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-10 mb-24">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -166,9 +155,9 @@ export default function Skills() {
             transition={{ duration: 0.8 }}
             className="max-w-3xl"
           >
-            <h2 className="text-6xl md:text-9xl font-space font-black text-white tracking-[-0.06em] leading-[0.85] uppercase">
+            <h2 className="text-6xl md:text-9xl font-black text-white tracking-[-0.06em] leading-[0.85] uppercase">
               Toolbox <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary via-white to-secondary animate-pulse">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-400">
                 & Stack
               </span>
             </h2>
@@ -180,36 +169,33 @@ export default function Skills() {
             transition={{ delay: 0.4 }}
             className="flex flex-col gap-4 border-l border-white/10 pl-6"
           >
-            <p className="text-gray-400 text-sm md:text-base font-inter max-w-xs leading-relaxed">
+            <p className="text-gray-400 text-sm md:text-base max-w-xs leading-relaxed">
               Kombinasi antara presisi pemrograman dan kebebasan kreatif untuk membangun produk digital yang utuh.
             </p>
             <div className="flex gap-2">
-              <span className="px-3 py-1 bg-secondary/10 text-secondary text-[10px] font-mono rounded-full border border-secondary/20">Engineering</span>
+              <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-[10px] font-mono rounded-full border border-cyan-500/20">Engineering</span>
               <span className="px-3 py-1 bg-purple-500/10 text-purple-400 text-[10px] font-mono rounded-full border border-purple-500/20">Design</span>
             </div>
           </motion.div>
         </div>
 
-        {/* Responsive Bento Grid */}
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
         >
-          {SKILLS_DATA.map((skill: Skill) => (
+          {SKILLS_DATA.map((skill) => (
             <SkillCard key={`grid-${skill.name}`} skill={skill} />
           ))}
         </motion.div>
       </div>
 
-      {/* Kinetic Marquee Visualizer */}
       <div className="mt-40 flex flex-col gap-0 opacity-40 hover:opacity-100 transition-opacity duration-700">
         <MarqueeRow items={techSkills} direction="left" speed={80} />
         <MarqueeRow items={creativeSkills} direction="right" speed={60} />
       </div>
 
-      {/* Decorative Line Progress */}
       <div className="absolute left-0 bottom-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </section>
   );
