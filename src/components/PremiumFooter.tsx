@@ -73,7 +73,7 @@ const FOOTER_CONFIG = {
         { label: "Projects_2026", href: "/archive?year=2026" },
         { label: "Legacy_Vault", href: "/archive?status=archived" },
         { label: "Source_Index", href: "https://github.com", external: true },
-        { label: "UI_Components", href: "/ui-components" },
+        { label: "UI_Components", href: "/components" },
       ],
     } as NavGroup,
   ],

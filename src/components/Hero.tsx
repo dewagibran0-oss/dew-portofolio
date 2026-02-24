@@ -1,14 +1,28 @@
 "use client";
 
-import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, AnimatePresence, useSpring, useReducedMotion } from "framer-motion";
+import { useRef, useState, useEffect, memo } from "react";
 import HeroScene from "./HeroScene";
+
+// Optimasi Rendering: Memoize background agar tidak re-render saat state parent berubah
+const MemoizedScene = memo(() => (
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 1.5 }}
+    className="absolute inset-0 z-0"
+  >
+    <HeroScene />
+  </motion.div>
+));
+
+MemoizedScene.displayName = "MemoizedScene";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
-  // Mencegah hydration error di Next.js
   useEffect(() => {
     setIsLoaded(true);
   }, []);
@@ -18,169 +32,148 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
-  // Spring smooth scroll values untuk motion yang mewah
+  // Spring yang dioptimasi (Damping tinggi = tidak goyang/jittery)
   const smoothProgress = useSpring(scrollYProgress, { 
-    stiffness: 100, 
+    stiffness: 70, 
     damping: 30, 
-    restDelta: 0.001 
+    mass: 0.5
   });
 
-  // Parallax & Cinematic Transformations
-  const yContent = useTransform(smoothProgress, [0, 1], [0, 400]);
-  const opacityContent = useTransform(smoothProgress, [0, 0.8], [1, 0]);
-  const scaleContent = useTransform(smoothProgress, [0, 1], [1, 0.85]);
-  const blurContent = useTransform(smoothProgress, [0, 0.4], ["blur(0px)", "blur(12px)"]);
-
-  // --- Handlers ---
-  
-  // 1. Launch Projects: Scroll ke section Projects
-  const handleLaunchProjects = () => {
-    const projectSection = document.getElementById("projects-section");
-    if (projectSection) {
-      projectSection.scrollIntoView({ behavior: "smooth" });
-    } else {
-      // Fallback jika ID belum ada, scroll ke bawah 100vh
-      window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
-    }
-  };
-
-  // 2. Get In Touch: Redirect ke Email/WhatsApp
-  const handleContact = () => {
-    // Bisa diganti dengan link WhatsApp: https://wa.me/nomoranda
-    window.location.href = "https://wa.me/62881025020924";
-  };
+  // Transformasi yang efisien (Menghindari Blur filter jika possible untuk performa)
+  const yContent = useTransform(smoothProgress, [0, 1], ["0%", "30%"]);
+  const opacityContent = useTransform(smoothProgress, [0, 0.5], [1, 0]);
+  const scaleContent = useTransform(smoothProgress, [0, 1], [1, 0.9]);
 
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-[#020617] cursor-default"
-      aria-label="Hero Section"
+      className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-[#020617] selection:bg-cyan-500/30"
     >
-      {/* 1. Texture Layer: Grain & Shimmer */}
-      <div className="absolute inset-0 z-50 pointer-events-none">
-        <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 via-transparent to-purple-500/5 opacity-30" />
+      {/* 1. Performance Overlay (GPU Accelerated) */}
+      <div className="absolute inset-0 z-[1] pointer-events-none transform-gpu">
+        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#020617_100%)]" />
       </div>
 
-      {/* 2. WebGL Background Layer */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2, ease: "easeInOut" }}
-        className="absolute inset-0 z-0"
-      >
-        <HeroScene />
-      </motion.div>
+      {/* 2. Background Layer */}
+      <MemoizedScene />
 
-      {/* 3. Adaptive Content Layer */}
+      {/* 3. Main UI Layer */}
       <AnimatePresence>
         {isLoaded && (
           <motion.div 
-            style={{ y: yContent, opacity: opacityContent, scale: scaleContent, filter: blurContent }}
-            className="relative z-10 text-center px-6 max-w-7xl mx-auto flex flex-col items-center"
+            style={{ 
+              y: shouldReduceMotion ? 0 : yContent, 
+              opacity: opacityContent, 
+              scale: scaleContent,
+              willChange: "transform, opacity" // Hint untuk Browser GPU
+            }}
+            className="relative z-10 w-full max-w-[1400px] mx-auto px-6 flex flex-col items-center"
           >
-            {/* Tagline */}
+            {/* Minimalist Top Tag */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 1 }}
-              className="mb-8"
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="group cursor-pointer mb-6"
             >
-              <span className="relative px-5 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-cyan-400 font-mono tracking-[0.4em] text-[9px] md:text-[11px] uppercase overflow-hidden group inline-block">
-                <span className="relative z-10">Digital & System Designer</span>
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-              </span>
+              <div className="flex items-center gap-3 px-4 py-1.5 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md hover:bg-white/[0.05] transition-colors">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-cyan-100/60">
+                  Available for new systems
+                </span>
+              </div>
             </motion.div>
             
-            {/* Headline */}
-            <div className="relative mb-10 select-none">
-              <div className="overflow-hidden py-2">
-                <motion.h1 
-                  initial={{ y: "110%", skewY: 7 }}
-                  animate={{ y: 0, skewY: 0 }}
-                  transition={{ delay: 0.6, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-[clamp(3rem,14vw,9.5rem)] font-bold leading-[0.8] tracking-[-0.06em] text-white"
-                >
-                  DEWA GIBRAN
-                </motion.h1>
-              </div>
+            {/* Headline with High-End Typography */}
+            <div className="relative mb-8 text-center overflow-visible">
+              <motion.h1 
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="text-white text-[clamp(2.5rem,12vw,10rem)] font-bold leading-[0.85] tracking-[-0.04em] perspective-1000"
+              >
+                DEWA <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/20">GIBRAN</span>
+              </motion.h1>
               
               <motion.div 
-                initial={{ scaleX: 0, opacity: 0 }}
-                animate={{ scaleX: 1, opacity: 1 }}
-                transition={{ delay: 1.8, duration: 1.2, ease: "circOut" }}
-                className="h-[1px] w-40 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto mt-6"
+                initial={{ width: 0 }}
+                animate={{ width: "80px" }}
+                transition={{ delay: 1.2, duration: 1.5 }}
+                className="h-[2px] bg-cyan-500 mx-auto mt-8 rounded-full shadow-[0_0_20px_#06b6d4]"
               />
             </div>
 
-            {/* Description */}
+            {/* Optimized Description */}
             <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 1 }}
-              className="max-w-2xl mx-auto text-gray-400 text-base md:text-xl font-light leading-relaxed tracking-tight mb-14 px-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1, duration: 1.5 }}
+              className="max-w-xl mx-auto text-gray-400 text-sm md:text-lg font-light leading-relaxed tracking-wide mb-12 text-center"
             >
-              Building high-performance <span className="text-white font-medium italic">digital ecosystems</span> 
-              <br className="hidden md:block" /> with surgical precision and immersive interactivity.
+              Architecting <span className="text-white">autonomous digital experiences</span> where aesthetic meets hyper-functional systems.
             </motion.p>
 
-            {/* CTA: High-End Button System */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center w-full sm:w-auto">
+            {/* CTA Buttons - Premium Minimalist */}
+            <div className="flex flex-col sm:flex-row gap-5 items-center justify-center w-full">
               <motion.button
-                onClick={handleLaunchProjects}
-                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.3 }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="group relative w-full sm:w-64 py-5 bg-white text-black font-bold text-[10px] uppercase tracking-[0.3em] rounded-full overflow-hidden transition-shadow hover:shadow-[0_0_40px_rgba(255,255,255,0.2)]"
+                onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: 'smooth' })}
+                className="relative px-10 py-4 bg-white text-black font-bold text-[11px] uppercase tracking-[0.2em] rounded-sm overflow-hidden group w-full sm:w-auto"
               >
-                <span className="relative z-10">Launch Projects</span>
-                <motion.div 
-                  className="absolute inset-0 bg-cyan-500"
-                  initial={{ x: "-101%" }}
-                  whileHover={{ x: 0 }}
-                  transition={{ duration: 0.4, ease: "circOut" }}
-                />
+                <div className="absolute inset-0 bg-cyan-500 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="relative z-10 transition-colors group-hover:text-white">Exploration</span>
               </motion.button>
               
               <motion.button
-                onClick={handleContact}
-                whileHover={{ backgroundColor: "rgba(255,255,255,0.08)", borderColor: "rgba(255,255,255,0.4)" }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.3 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full sm:w-64 py-5 border border-white/10 backdrop-blur-xl rounded-full font-bold text-white text-[10px] uppercase tracking-[0.3em] transition-all"
+                onClick={() => window.open('https://wa.me/62881025020924')}
+                className="px-10 py-4 border border-white/10 hover:border-white/40 backdrop-blur-sm text-white font-bold text-[11px] uppercase tracking-[0.2em] rounded-sm transition-all w-full sm:w-auto"
               >
-                Get In Touch
+                Initiate Contact
               </motion.button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 4. Scroll Visualizers */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.5 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-40 pointer-events-none"
-      >
-        <span className="text-[9px] font-mono tracking-[0.8em] uppercase text-gray-500">Discover</span>
-        <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent" 
-        />
-      </motion.div>
+      {/* Decorative Elements - Zero Interaction to save performance */}
+      <SideIndicators smoothProgress={smoothProgress} />
+    </section>
+  );
+}
 
-      {/* Left Vertical Indicator */}
-      <div className="absolute left-8 bottom-12 hidden lg:flex flex-col items-start gap-4 h-40">
-        <div className="w-[1px] flex-1 bg-white/5 relative">
+// Sub-komponen terpisah agar Hero tidak re-render saat scroll progress update
+function SideIndicators({ smoothProgress }: { smoothProgress: any }) {
+  return (
+    <>
+      {/* Scroll Mouse Icon */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-20">
+        <div className="w-[1px] h-10 bg-gradient-to-b from-white to-transparent" />
+      </div>
+
+      {/* Modern Vertical Progress */}
+      <div className="absolute left-10 bottom-10 hidden xl:flex flex-col items-center gap-6">
+        <span className="text-[10px] text-white/20 font-mono rotate-90 origin-left translate-x-3 uppercase tracking-[0.3em]">
+          Phase 01
+        </span>
+        <div className="h-32 w-[1px] bg-white/5 relative overflow-hidden">
           <motion.div 
             style={{ scaleY: smoothProgress }}
-            className="absolute top-0 w-full bg-cyan-500 origin-top h-full shadow-[0_0_15px_#22d3ee]" 
+            className="absolute top-0 w-full bg-cyan-500 origin-top h-full shadow-[0_0_10px_#22d3ee]" 
           />
         </div>
-        <span className="text-[9px] font-mono text-cyan-500 vertical-text rotate-180 uppercase tracking-widest">
-          Scroll Progress
-        </span>
       </div>
-    </section>
+    </>
   );
 }
