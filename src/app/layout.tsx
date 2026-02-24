@@ -24,8 +24,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
   
   // Tentukan rute mana saja yang TIDAK ingin menampilkan navbar
-  const hideNavbarRoutes = ["/archive"];
-  const shouldHideNavbar = hideNavbarRoutes.includes(pathname);
+const hideNavbarRoutes = ["/archive", "/changelog", "/docs" , "/ui-components"];
+const shouldHideNavbar = hideNavbarRoutes.includes(pathname);
 
   return (
     <html lang="en" className="bg-[#020617] scroll-smooth">
