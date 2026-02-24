@@ -47,7 +47,7 @@ export default function Hero() {
   // 2. Get In Touch: Redirect ke Email/WhatsApp
   const handleContact = () => {
     // Bisa diganti dengan link WhatsApp: https://wa.me/nomoranda
-    window.location.href = "mailto:dewagibran@example.com?subject=Project Inquiry";
+    window.location.href = "https://wa.me/62881025020924";
   };
 
   return (

@@ -30,20 +30,20 @@ interface Experience {
 }
 
 const DATA: Experience[] = [
-  // {
-  //   id: "01",
-  //   type: "work",
-  //   period: "2025 - PRESENT", // Sesuaikan tahunnya
-  //   role: "Procurement & System Support",
-  //   org: "PT. Cladhist Utama Karya",
-  //   desc: "Manajemen database pengadaan barang/jasa dan dokumentasi transaksi digital.",
-  //   fullLog: "Bertanggung jawab atas akurasi database vendor dan aset perusahaan. Mengimplementasikan sistem pengarsipan digital untuk mempermudah audit pengadaan dan pelaporan aset.",
-  //   achievements: ["Vendor Database Audit", "Digital Archive System", "Efficient Procurement"],
-  //   tags: ["Procurement", "Digital Filing", "Inventory"],
-  //   status: "ACTIVE_CONTRACT"
-  // },
   {
     id: "01",
+    type: "work",
+    period: "2025 - PRESENT", // Sesuaikan tahunnya
+    role: "Procurement & System Support",
+    org: "PT. Cladhist Utama Karya",
+    desc: "Manajemen database pengadaan barang/jasa dan dokumentasi transaksi digital.",
+    fullLog: "Bertanggung jawab atas akurasi database vendor dan aset perusahaan. Mengimplementasikan sistem pengarsipan digital untuk mempermudah audit pengadaan dan pelaporan aset.",
+    achievements: ["Vendor Database Audit", "Digital Archive System", "Efficient Procurement"],
+    tags: ["Procurement", "Digital Filing", "Inventory"],
+    status: "ACTIVE_CONTRACT"
+  },
+  {
+    id: "02",
     type: "work",
     period: "2024 - 2025", // Sesuaikan tahunnya
     role: "Digital Administration Specialist",
@@ -55,7 +55,7 @@ const DATA: Experience[] = [
     status: "COMPLETED"
   },
   {
-    id: "02",
+    id: "03",
     type: "work",
     period: "2023 — PRESENT",
     role: "Administrative & IT Operations",
@@ -67,7 +67,7 @@ const DATA: Experience[] = [
     status: "ACTIVE_CONTRACT"
   },
   {
-    id: "03",
+    id: "04",
     type: "education",
     period: "2024 — NOW",
     role: "S1 Informatika",
@@ -78,7 +78,7 @@ const DATA: Experience[] = [
     tags: ["Computer Science", "Systems Design", "Fullstack Development"],
   },
   {
-    id: "04",
+    id: "05",
     type: "education",
     period: "2021 — 2024",
     role: "Rekayasa Perangkat Lunak (RPL)",

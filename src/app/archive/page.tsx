@@ -31,7 +31,7 @@ interface Project {
   year: string;
   title: string;
   client: string;
-  category: "Fullstack" | "E-Commerce" | "Fintech" | "Company" | "Financial Tool";
+  category: "Fullstack" | "E-Commerce" | "Fintech" | "Company";
   tech: string[];
   image: string;
   githubUrl: string;
@@ -43,13 +43,13 @@ interface Project {
 const PROJECT_DATA: Project[] = [
   { id: "01", year: "2026", title: "My Portfolio", client: "Personal", category: "Fullstack", tech: ["Next.js 15", "Tailwind", "Framer"], image: "/my-porto.png", githubUrl: "https://github.com/dewa", liveUrl: "https://dewa-gibran.dev", status: "Active", description: "Advanced digital architecture featuring high-precision motion geometry and atomic design." },
   { id: "02", year: "2026", title: "KantinQ Smart", client: "Institutional", category: "Fullstack", tech: ["React", "MongoDB", "Midtrans"], image: "/kantinq.png", githubUrl: "https://github.com/dewa/kantinq", liveUrl: "https://kantinq.sembilanduadelapan.com/", status: "Beta", description: "Seamless point-of-sale infrastructure with integrated biometric-ready payment protocols." },
-  { id: "03", year: "2025", title: "Diva Ecosystem", client: "Retail Business", category: "E-Commerce", tech: ["Laravel", "MySQL", "Inertia"], image: "/divaphone.png", githubUrl: "https://github.com/dewagibran0-oss/Diva-Phone", liveUrl: "https://diva-phone.vercel.app/", status: "Active", description: "High-traffic retail platform optimized for mobile-first consumer hardware distribution." },
-  { id: "04", year: "2025", title: "DFS Tracker", client: "Self Project", category: "Financial Tool", tech: ["PHP", "PostgreSQL", "Tailwind"], image: "/dfs.png", githubUrl: "https://github.com/dewa/dfs-finance", liveUrl: "#", status: "Archived", description: "Internal fiscal intelligence tool designed for granular investment portfolio monitoring." },
+  { id: "03", year: "2025", title: "Diva Ecosystem", client: "Retail Business", category: "Fullstack", tech: ["Tailwind", "Next.Js", "Inertia"], image: "/divaphone.png", githubUrl: "https://github.com/dewagibran0-oss/Diva-Phone", liveUrl: "https://diva-phone.vercel.app/", status: "Active", description: "High-traffic retail platform optimized for mobile-first consumer hardware distribution." },
+  { id: "04", year: "2025", title: "DFS Tracker", client: "Self Project", category: "Fintech", tech: ["PHP", "PostgreSQL", "Tailwind"], image: "/dfs.png", githubUrl: "https://github.com/dewa/dfs-finance", liveUrl: "#", status: "Archived", description: "Internal fiscal intelligence tool designed for granular investment portfolio monitoring." },
   { id: "05", year: "2024", title: "MiniBank Core", client: "Educational", category: "Fintech", tech: ["PHP", "Laravel", "MySQL"], image: "/bankmini.png", githubUrl: "https://github.com/dewa/minibank", liveUrl: "#", status: "Archived", description: "Educational simulation of core banking ledgers and transaction synchronization." },
   { id: "06", year: "2024", title: "Esa Jaya Labdagati", client: "Mining Corp", category: "Company", tech: ["HTML", "CSS", "JS"], image: "/ejl.png", githubUrl: "https://github.com/dewa/esa-jaya", liveUrl: "https://esajayalabdagati.com/", status: "Active", description: "Professional corporate interface for heavy industrial mining and supply chain logistics." },
   { id: "07", year: "2024", title: "Sembilan Dua", client: "Trading House", category: "Company", tech: ["HTML", "CSS", "JS"], image: "/sdd.png", githubUrl: "https://github.com/dewa/928-trade", liveUrl: "https://sembilanduadelapan.com/", status: "Active", description: "Global trade portal facilitating multi-national shipping and currency integration." },
   { id: "08", year: "2023", title: "Pelayaran Tujuh", client: "Shipping Co", category: "Company", tech: ["HTML", "CSS", "JS"], image: "/pelayaran.jpg", githubUrl: "https://github.com/dewa/tujuh-tunas", liveUrl: "https://www.tujuhtunassatusamudera.com/", status: "Active", description: "Maritime enterprise solution for fleet management and cargo tracking identity." },
-  { id: "09", year: "2023", title: "Octa Investama", client: "Trading", category: "Company", tech: ["HTML", "CSS", "JS"], image: "/octa.jpg", githubUrl: "https://github.com/dewa/tujuh-tunas", liveUrl: "#", status: "Archived", description: "Corporate digital asset for a financial trading house focusing on compliance." }
+  { id: "09", year: "2023", title: "E.Commerce", client: "E.commerce", category: "E-Commerce", tech: ["PHP", "Mysql", "Midtrans"], image: "/octa.jpg", githubUrl: "https://github.com/dewa/tujuh-tunas", liveUrl: "#", status: "Archived", description: "E-Commerce Application." }
 ];
 
 /**
