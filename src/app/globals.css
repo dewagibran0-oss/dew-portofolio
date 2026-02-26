@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  /* Kita pindahkan konfigurasi warna ke sini agar sinkron dengan v4 */
   --color-black: #0a0a0a;
   --color-navy: #0f172a;
   --color-primary: #3b82f6;
@@ -9,81 +8,93 @@
   --color-accent: #8b5cf6;
   --color-white-soft: #e5e7eb;
 }
+
 @layer base {
-  html {
-    background: #020617;
-    cursor: crosshair; /* Kesan teknis/arsitek */
+  :root {
+    --bg-color: #020617;
+    /* Gunakan color-scheme untuk membantu browser optimasi rendering engine */
+    color-scheme: dark;
   }
 
-  /* Smooth scroll untuk navigasi internal */
+  html {
+    background: var(--bg-color);
+    /* Optimasi Scroll: Gunakan smooth-scroll hanya jika user tidak keberatan (Aksesibilitas) */
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background: var(--bg-color);
+    color: #e5e7eb;
+    /* Sembunyikan kursor asli */
+    cursor: none;
+    /* PERFORMANCE: Mencegah horizontal scroll yang memicu layout recalculation */
+    overflow-x: hidden;
+    /* PERFORMANCE: Membantu text rendering lebih tajam tanpa beban CPU tinggi */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+  }
+
+  /* Lenis optimization */
   html.lenis {
     height: auto;
   }
-
   .lenis.lenis-smooth {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
   }
 
-  /* Custom Selection Color */
   ::selection {
     background: rgba(34, 211, 238, 0.3);
     color: white;
   }
 }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-:root {
-  --bg-color: #0a0a0a;
+@layer utilities {
+  /* PERFORMANCE GLASSMORPHISM */
+  .glass {
+    background: rgba(10, 10, 10, 0.6); /* Lebih gelap agar kontras teks tinggi (Lighthouse SEO) */
+    /* PERFORMANCE: Backdrop filter berat bagi GPU mobile, gunakan hanya jika didukung */
+    @supports (backdrop-filter: blur(12px)) {
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.03);
+    }
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Memaksa browser menggunakan Hardware Acceleration */
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .glow-primary {
+    /* Gunakan opacity rendah untuk menghindari 'overdraw' pada mobile */
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+  }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
+  }
 }
 
-body {
-  background: var(--bg-color);
-  color: #e5e7eb;
-  cursor: none; /* Sembunyikan kursor asli untuk Custom Cursor kita */
-  overflow-x: hidden;
+/* CUSTOM SCROLLBAR: Gunakan 'thin' untuk browser modern agar lebih ringan */
+@supports (scrollbar-width: thin) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #1f1f23 #050505;
+  }
 }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Neon Glow Effect */
-.glow-primary {
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-.vertical-text {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-}
-
-/* Kustomisasi Scrollbar agar seirama dengan tema gelap */
+/* Chrome/Safari Scrollbar: Minimalisir styling agar tidak membebani main thread */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
-
 ::-webkit-scrollbar-track {
   background: #050505;
 }
-
 ::-webkit-scrollbar-thumb {
   background: #1f1f23;
-  border-radius: 10px;
+  border-radius: 20px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #4f46e5;
+  background: var(--color-primary);
 }

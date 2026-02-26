@@ -246,7 +246,7 @@ export default function XSystemsFooterV2() {
                   </p>
                 </div>
                 <Link 
-                  href="mailto:contact@dewagibran.dev"
+                  href="mailto:dewagibran0@gmail.com"
                   className="group flex items-center justify-center gap-3 w-full py-4 bg-white text-black rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-cyan-500 transition-all active:scale-95"
                 >
                   Start_Protocol <ArrowUpRight size={16} className="group-hover:rotate-45 transition-transform" />
