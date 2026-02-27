@@ -5,37 +5,50 @@ import { motion, useInView, Variants } from "framer-motion";
 import { IconType } from "react-icons";
 import { 
   SiNextdotjs, SiTypescript, SiReact, SiTailwindcss, 
-  SiNodedotjs, SiPostgresql, SiPrisma, SiDocker, 
+  SiNodedotjs, SiPostgresql, SiFlutter, SiDart, SiMysql, SiMongodb, SiDocker, 
   SiGit, SiVercel, SiFigma, SiThreedotjs, SiAdobephotoshop,
-  SiAdobepremierepro, SiCanva, SiGo
+  SiAdobepremierepro, SiCanva, SiGo, SiGithub, SiPhp, SiLaravel, SiHtml5, SiCss3, SiJavascript
 } from "react-icons/si";
+import { RiFileWord2Fill, RiFileExcel2Fill, RiFilePpt2Fill } from "react-icons/ri";
 
 // --- 1. Types & Data ---
 interface Skill {
   name: string;
   icon: IconType;
-  category: "frontend" | "backend" | "tools" | "creative";
+  category: "frontend" | "backend" | "tools" | "creative" | "mobile"| "database";
   level: string;
   color: string;
 }
 
 const SKILLS_DATA: Skill[] = [
+  { name: "HTML", icon: SiHtml5, category: "frontend", level: "Expert", color: "#E5532F" },
+  { name: "CSS", icon: SiCss3, category: "frontend", level: "Expert", color: "#2D53E5" },
+  { name: "Javascript", icon: SiJavascript, category: "backend", level: "Expert", color: "#F7E02A" },
   { name: "Next.js", icon: SiNextdotjs, category: "frontend", level: "Expert", color: "#ffffff" },
   { name: "TypeScript", icon: SiTypescript, category: "frontend", level: "Expert", color: "#3178c6" },
-  { name: "React", icon: SiReact, category: "frontend", level: "Expert", color: "#61dafb" },
+  { name: "React.js", icon: SiReact, category: "frontend", level: "Expert", color: "#61dafb" },
   { name: "Three.js", icon: SiThreedotjs, category: "frontend", level: "Advanced", color: "#ffffff" },
   { name: "Tailwind", icon: SiTailwindcss, category: "frontend", level: "Expert", color: "#38bdf8" },
   { name: "Node.js", icon: SiNodedotjs, category: "backend", level: "Advanced", color: "#339933" },
+  { name: "PHP", icon: SiPhp, category: "backend", level: "Expert", color: "#7B7FB6" },
+  { name: "Laravel", icon: SiLaravel, category: "backend", level: "Advanced", color: "#FF3629" },
   { name: "Go", icon: SiGo, category: "backend", level: "Intermediate", color: "#00add8" },
-  { name: "Postgres", icon: SiPostgresql, category: "backend", level: "Advanced", color: "#4169e1" },
-  { name: "Prisma", icon: SiPrisma, category: "backend", level: "Advanced", color: "#2d3748" },
+  { name: "Postgres", icon: SiPostgresql, category: "database", level: "Advanced", color: "#4169e1" },
+  { name: "Flutter", icon: SiFlutter, category: "mobile", level: "Advanced", color: "#62C9F7" },
+  { name: "Dart", icon: SiDart, category: "mobile", level: "Advanced", color: "#37B9F6" },
+  { name: "Mysql", icon: SiMysql, category: "database", level: "Expert", color: "#136490" },
+  { name: "MongoDB", icon: SiMongodb, category: "database", level: "Expert", color: "#146E50" },
   { name: "Docker", icon: SiDocker, category: "tools", level: "Intermediate", color: "#2496ed" },
   { name: "Git", icon: SiGit, category: "tools", level: "Expert", color: "#f05032" },
+  { name: "Github", icon: SiGithub, category: "tools", level: "Expert", color: "" },
   { name: "Vercel", icon: SiVercel, category: "tools", level: "Expert", color: "#ffffff" },
   { name: "Figma", icon: SiFigma, category: "creative", level: "Expert", color: "#f24e1e" },
   { name: "Photoshop", icon: SiAdobephotoshop, category: "creative", level: "Advanced", color: "#31a8ff" },
   { name: "Premiere", icon: SiAdobepremierepro, category: "creative", level: "Advanced", color: "#ea77ff" },
   { name: "Canva", icon: SiCanva, category: "creative", level: "Expert", color: "#00c4cc" },
+  { name: "Word", icon: RiFileWord2Fill, category: "creative", level: "Expert", color: "#325B9D" },
+  { name: "Excel", icon: RiFileExcel2Fill, category: "creative", level: "Expert", color: "#277348" },
+  { name: "PowerPoint", icon: RiFilePpt2Fill, category: "creative", level: "Expert", color: "#D14C2B" },
 ];
 
 // --- 2. Animation Variants ---
