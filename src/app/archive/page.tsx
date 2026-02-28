@@ -28,7 +28,8 @@ const PROJECT_DATA = [
   { id: "06", year: "2024", title: "Esa Jaya Labdagati", category: "Company", tech: ["HTML", "CSS", "JS"], image: "/ejl.png", githubUrl: "https://github.com/dewa/esa-jaya", liveUrl: "https://esajayalabdagati.com/", status: "Active", description: "Professional corporate interface for heavy industrial mining logistics." },
   { id: "07", year: "2024", title: "Sembilan Dua", category: "Company", tech: ["HTML", "CSS", "JS"], image: "/sdd.png", githubUrl: "https://github.com/dewa/928-trade", liveUrl: "https://sembilanduadelapan.com/", status: "Active", description: "Global trade portal facilitating multi-national shipping and currency." },
   { id: "08", year: "2023", title: "Pelayaran Tujuh", category: "Company", tech: ["HTML", "CSS", "JS"], image: "/pelayaran.jpg", githubUrl: "https://github.com/dewa/tujuh-tunas", liveUrl: "https://www.tujuhtunassatusamudera.com/", status: "Active", description: "Maritime enterprise solution for fleet management and cargo tracking." },
-  { id: "09", year: "2023", title: "E-Commerce", category: "E-Commerce", tech: ["PHP", "MySQL", "Midtrans"], image: "/octa.jpg", githubUrl: "https://github.com/dewa/tujuh-tunas", liveUrl: "#", status: "Archived", description: "Full-scale E-commerce application with integrated payment gateway." }
+  { id: "09", year: "2023", title: "E-Commerce", category: "E-Commerce", tech: ["PHP", "MySQL", "Midtrans"], image: "/octa.jpg", githubUrl: "https://github.com/dewa/tujuh-tunas", liveUrl: "#", status: "Archived", description: "Full-scale E-commerce application with integrated payment gateway." },
+  { id: "10", year: "2026", title: "TTSS Mobile Application", category: "Mobile", tech: ["Flutter", "Dart",], image: "/ttss-mobile.png", githubUrl: "https://github.com/dewa/tujuh-tunas", liveUrl: "#", status: "Active", description: "Maritime enterprise solution for fleet management and cargo tracking Mobile." }
 ] as const;
 
 /**
@@ -128,7 +129,7 @@ ProjectCard.displayName = "ProjectCard";
 function ArchiveContent() {
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
-  const categories = ["All", "Fullstack", "E-Commerce", "Fintech", "Company"];
+  const categories = ["All", "Fullstack", "E-Commerce", "Fintech", "Company", "Mobile"];
 
   // Memoized filter logic for zero-lag searching
   const filtered = useMemo(() => {

@@ -48,11 +48,11 @@ const PROJECTS = [
   },
   {
     id: "04",
-    title: "KantinQ Smart Order",
-    category: "SaaS",
-    description: "Platform pemesanan kantin digital dengan integrasi gateway pembayaran Midtrans.",
-    tags: ["React.js", "MongoDB", "Midtrans"],
-    image: "/kantinq.png",
+    title: "TTSS Mobile Application",
+    category: "Mobile",
+    description: "Company Profile Dengan Sistem Mobile.",
+    tags: ["Dart", "Flutter"],
+    image: "/ttss-mobile.png",
     gridClass: "lg:col-span-3 lg:row-span-1",
     accent: "#06b6d4",
     icon: Code2
