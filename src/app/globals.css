@@ -167,3 +167,17 @@ html[data-theme="light"] ::-webkit-scrollbar-track {
 html[data-theme="light"] ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
 }
+
+/*
+ * ============================================================
+ *  PERF: content-visibility untuk section di bawah lipatan.
+ *  Browser melewati layout + paint konten off-screen saat load
+ *  → menurunkan render-work & mempercepat LCP di perangkat lemah.
+ *  contain-intrinsic-size menjaga tinggi perkiraan agar scrollbar
+ *  & anchor tidak melompat (tidak menimbulkan CLS).
+ * ============================================================
+ */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}

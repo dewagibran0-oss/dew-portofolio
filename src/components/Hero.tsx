@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform, AnimatePresence, useSpring, useReducedMotion, type MotionValue } from "framer-motion";
-import { useRef, useState, useEffect, memo } from "react";
+import { motion, useScroll, useTransform, useSpring, useReducedMotion, type MotionValue } from "framer-motion";
+import { useRef, memo } from "react";
 import Link from "next/link";
 import HeroScene from "./HeroScene";
 import { useLang } from "@/lib/i18n";
@@ -11,9 +11,10 @@ const BackgroundLayer = memo(() => (
   <div className="absolute inset-0 z-0 pointer-events-none transform-gpu overflow-hidden">
     <HeroScene />
 
-    {/* High-End Ambient Lighting */}
-    <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/10 blur-[140px] rounded-full mix-blend-screen opacity-40 animate-pulse" />
-    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[140px] rounded-full mix-blend-screen opacity-30" />
+    {/* High-End Ambient Lighting — blur diperkecil (140→90px) & animate-pulse
+        dihapus agar tidak me-repaint area besar selama jendela LCP. */}
+    <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/10 blur-[90px] rounded-full mix-blend-screen opacity-40" />
+    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[90px] rounded-full mix-blend-screen opacity-30" />
 
     {/* Grainy Texture Overlay — di-host lokal (hindari request pihak ketiga) */}
     <div className="absolute inset-0 opacity-[0.2] bg-[url('/noise.svg')] mix-blend-soft-light pointer-events-none" />
@@ -27,13 +28,8 @@ BackgroundLayer.displayName = "BackgroundLayer";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   const { t } = useLang();
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -63,17 +59,15 @@ export default function Hero() {
     >
       <BackgroundLayer />
 
-      <AnimatePresence>
-        {isLoaded && (
-          <motion.div 
-            style={{ 
-              y: shouldReduceMotion ? 0 : yContent, 
-              scale,
-              opacity,
-              willChange: "transform, opacity" 
-            }}
-            className="relative z-10 w-full flex flex-col items-center justify-center px-6 py-20"
-          >
+      <motion.div
+        style={{
+          y: shouldReduceMotion ? 0 : yContent,
+          scale,
+          opacity,
+          willChange: "transform, opacity"
+        }}
+        className="relative z-10 w-full flex flex-col items-center justify-center px-6 py-20"
+      >
             {/* 1. Floating Badge Status */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -93,9 +87,11 @@ export default function Hero() {
             </motion.div>
             
             {/* 2. Headline - Extreme Mobile Typography */}
+            {/* Elemen LCP: render terlihat sejak paint pertama (tanpa opacity-0 awal)
+                agar LCP tidak menunggu hydration/animasi. */}
             <div className="relative text-center mb-12 md:mb-16">
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 1, scale: 1 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col items-center justify-center"
@@ -111,7 +107,7 @@ export default function Hero() {
                 </h1>
                 
                 {/* Decorative Aurora behind name */}
-                <div className="absolute inset-0 bg-cyan-500/10 blur-[80px] -z-10 rounded-full opacity-50 select-none" />
+                <div className="absolute inset-0 bg-cyan-500/10 blur-[60px] -z-10 rounded-full opacity-50 select-none" />
               </motion.div>
               
               <motion.div 
@@ -158,9 +154,7 @@ export default function Hero() {
                 </motion.button>
               </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </motion.div>
 
       <ScrollHUD smoothProgress={smoothProgress} />
       <TechnicalFrame />

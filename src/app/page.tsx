@@ -32,26 +32,28 @@ export default function Home() {
         <Hero />
 
         <Suspense fallback={<SectionLoader />}>
-          <Skills />
+          <div className="cv-auto">
+            <Skills />
+          </div>
 
           <div className="flex flex-col">
-            <section id="about" className="scroll-mt-20">
+            <section id="about" className="scroll-mt-20 cv-auto">
               <About />
             </section>
 
-            <section id="services" className="scroll-mt-20">
+            <section id="services" className="scroll-mt-20 cv-auto">
               <Services />
             </section>
 
-            <section id="projects" className="scroll-mt-20">
+            <section id="projects" className="scroll-mt-20 cv-auto">
               <Projects />
             </section>
 
-            <section id="experience" className="scroll-mt-20">
+            <section id="experience" className="scroll-mt-20 cv-auto">
               <Experience />
             </section>
 
-            <section id="contact" className="scroll-mt-20">
+            <section id="contact" className="scroll-mt-20 cv-auto">
               <Contact />
             </section>
 
