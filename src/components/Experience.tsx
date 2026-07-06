@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { 
   motion, 
   useScroll, 
   useSpring, 
   useTransform, 
-  AnimatePresence,
-  useInView
+  AnimatePresence
 } from "framer-motion";
-import { 
-  Briefcase, GraduationCap, Calendar, 
-  ChevronRight, Cpu, X, CheckCircle2, 
+import {
+  Briefcase, GraduationCap, Calendar,
+  ChevronRight, X, CheckCircle2,
   Terminal, ExternalLink, Activity
 } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 // --- Types & Data ---
 interface Experience {
@@ -29,15 +29,15 @@ interface Experience {
   achievements: string[];
 }
 
-const DATA: Experience[] = [
+// Meta netral-bahasa (periode/organisasi/tags/achievements). Teks role/desc/fullLog
+// diambil dari dictionary via useLang.
+type ExpMeta = Omit<Experience, "role" | "desc" | "fullLog">;
+const EXP_META: ExpMeta[] = [
   {
     id: "01",
     type: "work",
-    period: "2025 - PRESENT", // Sesuaikan tahunnya
-    role: "Procurement & System Support",
+    period: "2025 - PRESENT",
     org: "PT. Cladhist Utama Karya",
-    desc: "Manajemen database pengadaan barang/jasa dan dokumentasi transaksi digital.",
-    fullLog: "Bertanggung jawab atas akurasi database vendor dan aset perusahaan. Mengimplementasikan sistem pengarsipan digital untuk mempermudah audit pengadaan dan pelaporan aset.",
     achievements: ["Vendor Database Audit", "Digital Archive System", "Efficient Procurement"],
     tags: ["Procurement", "Digital Filing", "Inventory"],
     status: "ACTIVE_CONTRACT"
@@ -45,11 +45,8 @@ const DATA: Experience[] = [
   {
     id: "02",
     type: "work",
-    period: "2024 - 2025", // Sesuaikan tahunnya
-    role: "Digital Administration Specialist",
+    period: "2024 - 2025",
     org: "PT. Sembilan Dua Delapan",
-    desc: "Optimasi pengelolaan Delivery Order (DO) dan validasi data logistik ekspor-impor.",
-    fullLog: "Mengelola siklus dokumen container dengan ketelitian tinggi. Menggunakan teknik pengolahan data digital untuk memastikan validitas manifest dan koordinasi logistik yang tanpa hambatan.",
     achievements: ["Zero-Error Documentation", "DO System Optimization", "Export-Import Flow"],
     tags: ["Logistics Tech", "Data Validation", "Excel Expert"],
     status: "COMPLETED"
@@ -58,10 +55,7 @@ const DATA: Experience[] = [
     id: "03",
     type: "work",
     period: "2023 — PRESENT",
-    role: "Administrative & IT Operations",
     org: "PT. Tujuh Tunas Satu Samudera",
-    desc: "Digitalisasi sistem administrasi pelayaran dan pemeliharaan infrastruktur IT operasional.",
-    fullLog: "Mengintegrasikan sistem manajemen dokumen kapal ke format digital untuk meningkatkan efisiensi akses data. Bertanggung jawab atas troubleshooting perangkat keras dan kelancaran sistem informasi internal perusahaan.",
     achievements: ["Digital Workflow Migration", "99% Data Accuracy", "Internal IT Support"],
     tags: ["Digital Admin", "System Support", "Logistics"],
     status: "ACTIVE_CONTRACT"
@@ -70,10 +64,7 @@ const DATA: Experience[] = [
     id: "04",
     type: "education",
     period: "2024 — NOW",
-    role: "S1 Informatika",
     org: "Universitas Bakrie",
-    desc: "Fokus pada pengembangan sistem informasi, manajemen basis data, dan rekayasa web.",
-    fullLog: "Mendalami struktur data, algoritma, dan arsitektur aplikasi modern. Aktif dalam pengembangan solusi teknologi yang relevan dengan kebutuhan efisiensi industri.",
     achievements: ["Dean's List Candidate", "Web Dev Projects", "Database Design"],
     tags: ["Computer Science", "Systems Design", "Fullstack Development"],
   },
@@ -81,10 +72,7 @@ const DATA: Experience[] = [
     id: "05",
     type: "education",
     period: "2021 — 2024",
-    role: "Rekayasa Perangkat Lunak (RPL)",
     org: "SMK 17 Agustus 1945",
-    desc: "Fondasi pemrograman, logika algoritma, dan siklus pengembangan perangkat lunak.",
-    fullLog: "Mempelajari fundamental coding (HTML/CSS/JS/PHP) dan perancangan database sejak dini. Berhasil menyelesaikan berbagai proyek aplikasi web sederhana sebagai syarat kelulusan.",
     achievements: ["Vocational Excellence", "Junior Programmer", "Software Logic"],
     tags: ["Software Engineering", "Coding Basics", "Logic"],
   }
@@ -92,6 +80,7 @@ const DATA: Experience[] = [
 
 // --- Sub-Component: Experience Modal ---
 const ExperienceModal = ({ item, isOpen, onClose }: { item: Experience; isOpen: boolean; onClose: () => void }) => {
+  const { t } = useLang();
   return (
     <AnimatePresence>
       {isOpen && (
@@ -107,7 +96,7 @@ const ExperienceModal = ({ item, isOpen, onClose }: { item: Experience; isOpen: 
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[600px] bg-[#0A0A0B] border border-white/10 rounded-[2.5rem] z-[101] overflow-hidden shadow-2xl"
+            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[600px] bg-[var(--bg-card)] border border-white/10 rounded-[2.5rem] z-[101] overflow-hidden shadow-2xl"
           >
             <div className="p-8 md:p-12 relative overflow-y-auto max-h-[85vh]">
               <button onClick={onClose} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
@@ -125,13 +114,13 @@ const ExperienceModal = ({ item, isOpen, onClose }: { item: Experience; isOpen: 
               <div className="space-y-8">
                 <div>
                   <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Activity size={14} className="text-cyan-500" /> Executive_Summary
+                    <Activity size={14} className="text-cyan-500" /> {t.experience.summary}
                   </h4>
                   <p className="text-zinc-400 leading-relaxed font-light">{item.fullLog}</p>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4 italic">Key_Achievements</h4>
+                  <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4 italic">{t.experience.achievements}</h4>
                   <div className="grid grid-cols-1 gap-3">
                     {item.achievements.map((acc, i) => (
                       <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 text-xs text-zinc-300">
@@ -159,9 +148,11 @@ const ExperienceModal = ({ item, isOpen, onClose }: { item: Experience; isOpen: 
 
 // --- Sub-Component: Timeline Item ---
 function TimelineItem({ item, index }: { item: Experience, index: number }) {
+  const { t } = useLang();
+  const readLogLabel = t.experience.readLog;
   const [isOpen, setIsOpen] = useState(false);
   const isEven = index % 2 === 0;
-  
+
   return (
     <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-24 items-center">
       {/* Connector Dot */}
@@ -208,7 +199,7 @@ function TimelineItem({ item, index }: { item: Experience, index: number }) {
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
           
           <p className="text-zinc-400 text-base md:text-lg font-light leading-relaxed mb-8">
-            "{item.desc}"
+            &quot;{item.desc}&quot;
           </p>
 
           <div className="flex flex-wrap gap-2 mb-8">
@@ -220,7 +211,7 @@ function TimelineItem({ item, index }: { item: Experience, index: number }) {
           </div>
 
           <div className="flex items-center gap-2 text-[10px] font-black text-cyan-500 uppercase tracking-[0.3em]">
-            <span>Read_Full_Log</span>
+            <span>{readLogLabel}</span>
             <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </div>
         </div>
@@ -234,6 +225,11 @@ function TimelineItem({ item, index }: { item: Experience, index: number }) {
 // --- Main Section Component ---
 export default function NeuralExperience() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { t } = useLang();
+  const data: Experience[] = EXP_META.map((m) => ({
+    ...m,
+    ...t.experience.items[m.id],
+  }));
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
@@ -243,7 +239,7 @@ export default function NeuralExperience() {
   const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
 
   return (
-    <section ref={containerRef} className="relative min-h-screen bg-[#020202] py-40 md:py-60 px-6 overflow-hidden">
+    <section ref={containerRef} className="relative min-h-screen bg-[var(--bg-section)] py-40 md:py-60 px-6 overflow-hidden">
       {/* Background Decor */}
       <div className="absolute inset-0 pointer-events-none opacity-30">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full" />
@@ -254,19 +250,19 @@ export default function NeuralExperience() {
         <header className="mb-40 space-y-8">
           <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} className="flex items-center gap-4">
             <div className="h-[1px] w-12 bg-cyan-500" />
-            <span className="text-cyan-500 font-mono text-xs uppercase tracking-[0.5em]">Career_Matrix_v4.0</span>
+            <span className="text-cyan-500 font-mono text-xs uppercase tracking-[0.5em]">{t.experience.tag}</span>
           </motion.div>
-          
-          <motion.h2 
+
+          <motion.h2
             style={{ opacity }}
             className="text-7xl md:text-[10rem] font-black text-white leading-[0.8] tracking-tighter uppercase italic"
           >
-            History <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-600">Encoded.</span>
+            {t.experience.titleTop} <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-600">{t.experience.titleBottom}</span>
           </motion.h2>
-          
+
           <div className="flex justify-end">
             <p className="max-w-xs text-zinc-500 font-mono text-[10px] uppercase tracking-widest border-r-2 border-cyan-500 pr-6 text-right">
-              Rekam jejak profesional dalam pengembangan sistem dan arsitektur infrastruktur digital tingkat lanjut.
+              {t.experience.intro}
             </p>
           </div>
         </header>
@@ -281,7 +277,7 @@ export default function NeuralExperience() {
           </div>
 
           <div className="space-y-32 md:space-y-64">
-            {DATA.map((item, index) => (
+            {data.map((item, index) => (
               <TimelineItem key={item.id} item={item} index={index} />
             ))}
           </div>
@@ -296,7 +292,7 @@ export default function NeuralExperience() {
           <div className="flex items-center gap-8">
             <div className="flex flex-col items-end">
               <span className="text-white font-bold mb-1 italic">Dewa_Gibran</span>
-              <span>Lead_System_Architect</span>
+              <span>{t.experience.role}</span>
             </div>
             <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
               <ExternalLink size={18} />

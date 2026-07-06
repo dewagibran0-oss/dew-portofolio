@@ -5,7 +5,6 @@ import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Preload, AdaptiveDpr, PerspectiveCamera } from "@react-three/drei";
 
-// --- Interface untuk Props agar tidak error ---
 interface ParticleProps {
   count: number;
   radius: number;
@@ -14,11 +13,11 @@ interface ParticleProps {
 }
 
 const vertexShader = `
-  attribute vec3 color;      
-  attribute float size;      
+  attribute vec3 color;
+  attribute float size;
   varying vec3 vColor;
   varying float vOpacity;
-  varying float vRainbow;    
+  varying float vRainbow;
   uniform float uTime;
   uniform vec2 uMouse;
 
@@ -26,7 +25,7 @@ const vertexShader = `
     vColor = color;
     vec3 pos = position;
     pos.z += cos(uTime * 0.5 + pos.x) * 0.1;
-    
+
     float dist = distance(pos.xy, uMouse * 2.0);
     float activeRange = 0.7;
     vRainbow = 0.0;
@@ -65,7 +64,7 @@ const fragmentShader = `
       float hue = fract(uTime * 0.3 + vRainbow);
       vec3 rainbowColor = hsv2rgb(vec3(hue, 0.8, 1.0));
       finalColor = mix(vColor, rainbowColor, vRainbow);
-      finalColor *= (1.0 + vRainbow * 3.0); 
+      finalColor *= (1.0 + vRainbow * 3.0);
     }
     float mask = pow(1.0 - r * 2.0, 3.0);
     gl_FragColor = vec4(finalColor, mask * vOpacity);
@@ -74,7 +73,7 @@ const fragmentShader = `
 
 function ProParticles({ count, radius, color, speed }: ParticleProps) {
   const pointsRef = useRef<THREE.Points>(null!);
-  
+
   const geoData = useMemo(() => {
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
@@ -91,19 +90,22 @@ function ProParticles({ count, radius, color, speed }: ParticleProps) {
       positions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       positions[i3 + 2] = (Math.random() - 0.5) * 1.5;
 
-      colors[i3] = clr.r; 
-      colors[i3 + 1] = clr.g; 
+      colors[i3] = clr.r;
+      colors[i3 + 1] = clr.g;
       colors[i3 + 2] = clr.b;
-      
+
       sizes[i] = Math.random() * 0.03 + 0.012;
     }
     return { positions, colors, sizes };
   }, [count, radius, color]);
 
-  const uniforms = useMemo(() => ({
-    uTime: { value: 0 },
-    uMouse: { value: new THREE.Vector2(0, 0) }
-  }), []);
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uMouse: { value: new THREE.Vector2(0, 0) },
+    }),
+    []
+  );
 
   useFrame((state) => {
     if (!pointsRef.current) return;
@@ -115,7 +117,6 @@ function ProParticles({ count, radius, color, speed }: ParticleProps) {
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        {/* FIX: Menambahkan properti args agar TypeScript tidak error */}
         <bufferAttribute
           attach="attributes-position"
           count={geoData.positions.length / 3}
@@ -150,29 +151,109 @@ function ProParticles({ count, radius, color, speed }: ParticleProps) {
   );
 }
 
+/**
+ * Fallback ringan (tanpa WebGL) untuk mobile / reduced-motion / mode terang.
+ * Nuansa sinematik dipertahankan lewat gradient + aurora blur, tapi
+ * NOL beban GPU/main-thread → aman untuk skor Performance mobile.
+ */
+function StaticAurora() {
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden bg-[var(--bg)]">
+      <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[80%] h-[55%] bg-cyan-500/20 blur-[130px] rounded-full opacity-60" />
+      <div className="absolute bottom-[5%] right-[5%] w-[45%] h-[45%] bg-indigo-500/15 blur-[130px] rounded-full opacity-50" />
+      <div className="absolute top-[20%] left-[5%] w-[35%] h-[35%] bg-blue-600/10 blur-[120px] rounded-full opacity-40" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,var(--bg)_100%)]" />
+    </div>
+  );
+}
+
 export default function HeroScene() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-  if (!mounted) return <div className="fixed inset-0 bg-[#020617]" />;
+  const [heavy, setHeavy] = useState(false); // true → render Canvas WebGL
+  const [active, setActive] = useState(true); // pause render-loop saat offscreen
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const decide = () => {
+      const desktop = window.matchMedia("(min-width: 768px)").matches;
+      const finePointer = window.matchMedia("(hover: hover)").matches;
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      const theme = document.documentElement.getAttribute("data-theme");
+      // Partikel berat hanya untuk desktop bertenaga, non-reduced-motion, mode gelap.
+      setHeavy(desktop && finePointer && !reduce && theme !== "light");
+    };
+
+    decide();
+    window.addEventListener("resize", decide);
+
+    // Amati perubahan tema (toggle) untuk switch canvas <-> aurora.
+    const mo = new MutationObserver(decide);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    return () => {
+      window.removeEventListener("resize", decide);
+      mo.disconnect();
+    };
+  }, []);
+
+  // Hentikan render-loop ketika hero keluar viewport → hemat TBT & baterai.
+  useEffect(() => {
+    if (!heavy || !wrapRef.current) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting),
+      { threshold: 0.01 }
+    );
+    io.observe(wrapRef.current);
+    return () => io.disconnect();
+  }, [heavy]);
+
+  if (!mounted) return <div className="fixed inset-0 bg-[var(--bg)]" />;
+
+  if (!heavy) {
+    return (
+      <div ref={wrapRef} className="fixed inset-0 z-0">
+        <StaticAurora />
+      </div>
+    );
+  }
 
   return (
-    <div className="fixed inset-0 z-0 bg-[#020617] overflow-hidden">
-      <Canvas gl={{ antialias: false }} dpr={[1, 1.5]}>
+    <div
+      ref={wrapRef}
+      className="fixed inset-0 z-0 bg-[var(--bg)] overflow-hidden"
+    >
+      <Canvas
+        gl={{ antialias: false, powerPreference: "high-performance" }}
+        dpr={[1, 1.5]}
+        frameloop={active ? "always" : "never"}
+      >
         <AdaptiveDpr pixelated />
         <PerspectiveCamera makeDefault position={[0, 0, 2.5]} fov={50} />
         <Suspense fallback={null}>
           <group>
-            <ProParticles count={3000} radius={1.3} color="#22d3ee" speed={1} />
-            <ProParticles count={1500} radius={2.8} color="#818cf8" speed={0.5} />
+            <ProParticles count={2200} radius={1.3} color="#22d3ee" speed={1} />
+            <ProParticles count={1100} radius={2.8} color="#818cf8" speed={0.5} />
           </group>
           <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]}>
             <planeGeometry args={[30, 30, 40, 40]} />
-            <meshBasicMaterial color="#22d3ee" wireframe transparent opacity={0.04} />
+            <meshBasicMaterial
+              color="#22d3ee"
+              wireframe
+              transparent
+              opacity={0.04}
+            />
           </mesh>
         </Suspense>
         <Preload all />
       </Canvas>
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_10%,#020617_100%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_10%,var(--bg)_100%)]" />
     </div>
   );
 }

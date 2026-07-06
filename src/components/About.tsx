@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useMemo, useState } from "react";
+import React, { useRef, useState } from "react";
 import { 
   motion, 
   useScroll, 
@@ -10,9 +10,7 @@ import {
   useMotionValue 
 } from "framer-motion";
 import Image from "next/image";
-import { 
-  DownloadIcon, // Ganti ke Download icon
-  Globe2, 
+import {
   Sparkles,
   Mail,
   Zap,
@@ -20,6 +18,7 @@ import {
   FileText,
   CheckCircle2
 } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 // --- Types ---
 interface StatCardProps {
@@ -30,65 +29,85 @@ interface StatCardProps {
   delay: number;
 }
 
-// --- Sub-Component: 3D Photo Architect ---
+// --- Sub-Component: Portrait melayang tanpa kotak (foto PNG transparan) ---
 const Photo3D = ({ isInView }: { isInView: boolean }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const { t } = useLang();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const springConfig = { stiffness: 100, damping: 30 };
-  const rotateX = useSpring(useTransform(mouseY, [-300, 300], [10, -10]), springConfig);
-  const rotateY = useSpring(useTransform(mouseX, [-300, 300], [-10, 10]), springConfig);
+  // Tilt 3D halus mengikuti kursor.
+  const springConfig = { stiffness: 90, damping: 25 };
+  const rotateX = useSpring(useTransform(mouseY, [-300, 300], [8, -8]), springConfig);
+  const rotateY = useSpring(useTransform(mouseX, [-300, 300], [-8, 8]), springConfig);
+  // Parallax lembut: foto bergeser sedikit berlawanan arah aura → kesan kedalaman.
+  const imgX = useSpring(useTransform(mouseX, [-300, 300], [-14, 14]), springConfig);
+  const imgY = useSpring(useTransform(mouseY, [-300, 300], [-14, 14]), springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    if (!wrapRef.current) return;
+    const rect = wrapRef.current.getBoundingClientRect();
     mouseX.set(e.clientX - (rect.left + rect.width / 2));
     mouseY.set(e.clientY - (rect.top + rect.height / 2));
   };
 
   return (
     <motion.div
-      ref={cardRef}
+      ref={wrapRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => { mouseX.set(0); mouseY.set(0); }}
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.96 }}
       animate={isInView ? { opacity: 1, scale: 1 } : {}}
       transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-      style={{ rotateX, rotateY, perspective: 1500 }}
-      className="relative lg:col-span-5 z-20"
+      style={{ rotateX, rotateY, perspective: 1600 }}
+      className="relative lg:col-span-5 z-20 [transform-style:preserve-3d]"
     >
-      <div className="absolute -inset-2 bg-gradient-to-br from-secondary/30 via-transparent to-purple-500/20 rounded-[3rem] blur-2xl opacity-50" />
-      
-      <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-[#0A0A0C] border border-white/10 group">
-        <Image
-          src="/profile.jpg" // Pastikan file ada di folder public
-          alt="Dewa Gibran Digital Architect"
-          fill
-          className="object-cover transition-transform duration-1000 scale-110 group-hover:scale-105 filter grayscale-[0.2] group-hover:grayscale-0"
-          priority
+      <div className="relative aspect-[4/5] group">
+        {/* Aura glow di belakang subjek (tanpa border/kartu) */}
+        <motion.div
+          aria-hidden
+          animate={{ scale: [1, 1.08, 1], opacity: [0.55, 0.8, 0.55] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-gradient-to-br from-secondary/40 via-cyan-500/20 to-purple-500/30 blur-[90px]"
         />
-        
-        {/* Overlay Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
-        
-        {/* Scanning Line */}
-        <motion.div 
-          animate={{ top: ["0%", "100%"] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-secondary/50 to-transparent z-20"
-        />
+        {/* Cincin dekoratif tipis */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-[70%] h-[70%] rounded-full border border-white/[0.06]" />
+        </div>
 
-        <div className="absolute bottom-8 inset-x-8 p-6 backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-3xl flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center border border-secondary/20 group-hover:rotate-[360deg] transition-transform duration-1000">
-              <Globe2 size={22} className="text-secondary" />
-            </div>
-            <div>
-              <p className="text-white font-bold text-base tracking-tight">Dewa Gibran</p>
-              <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest">Base: Jakarta, IDN</p>
-            </div>
-          </div>
+        {/* FOTO: transparan, tanpa border, melayang + parallax + float idle */}
+        <motion.div
+          style={{ x: imgX, y: imgY }}
+          className="absolute inset-0"
+        >
+          <motion.div
+            animate={{ y: [0, -14, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="relative w-full h-full"
+          >
+            <Image
+              src="/profile-cut.png"
+              alt="Dewa Gibran — Digital Architect"
+              fill
+              sizes="(max-width: 1024px) 80vw, 40vw"
+              priority
+              className="object-contain object-bottom drop-shadow-[0_35px_60px_rgba(0,0,0,0.55)] transition-[filter] duration-700 grayscale-[0.15] group-hover:grayscale-0"
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Bayangan pijakan (ground glow) biar tidak 'mengambang' aneh */}
+        <div className="absolute bottom-[6%] left-1/2 -translate-x-1/2 w-[55%] h-6 bg-black/60 blur-2xl rounded-[50%]" />
+
+        {/* Chip nama minimalis (glass, tanpa kotak besar) */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 px-5 py-2.5 rounded-full backdrop-blur-md bg-white/[0.04] border border-white/10">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75 animate-ping" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary" />
+          </span>
+          <p className="text-white font-bold text-sm tracking-tight">Dewa Gibran</p>
+          <span className="w-px h-4 bg-white/15" />
+          <p className="text-zinc-400 font-mono text-[10px] uppercase tracking-widest">{t.about.base}</p>
         </div>
       </div>
     </motion.div>
@@ -119,6 +138,7 @@ export default function About() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDownloaded, setIsDownloaded] = useState(false);
   const isInView = useInView(containerRef, { once: true, margin: "-10%" });
+  const { t } = useLang();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -140,15 +160,15 @@ export default function About() {
   };
 
   const stats = [
-    { label: "Elite Projects", value: "24", suffix: "+", icon: <Zap size={20} /> },
-    { label: "Systems Built", value: "15", suffix: "Pro", icon: <Shapes size={20} /> },
-    { label: "Design Accuracy", value: "100", suffix: "%", icon: <Sparkles size={20} /> },
+    { label: t.about.stats.projects, value: "24", suffix: "+", icon: <Zap size={20} /> },
+    { label: t.about.stats.systems, value: "15", suffix: "Pro", icon: <Shapes size={20} /> },
+    { label: t.about.stats.accuracy, value: "100", suffix: "%", icon: <Sparkles size={20} /> },
   ];
 
   return (
     <section 
       ref={containerRef}
-      className="relative w-full py-32 md:py-64 bg-[#020202] overflow-hidden"
+      className="relative w-full py-32 md:py-64 bg-[var(--bg-section)] overflow-hidden"
       id="about"
     >
       {/* Background Kinetic Text */}
@@ -176,19 +196,20 @@ export default function About() {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
                   <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                  <span className="text-secondary font-mono text-[10px] uppercase tracking-[0.3em] font-bold">About Architect</span>
+                  <span className="text-secondary font-mono text-[10px] uppercase tracking-[0.3em] font-bold">{t.about.badge}</span>
                 </div>
-                
+
                 <h2 className="text-6xl md:text-8xl font-black text-white leading-[0.9] tracking-tighter uppercase">
-                  Crafting <br />
+                  {t.about.titleTop} <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-white">
-                    Digital Soul.
+                    {t.about.titleBottom}
                   </span>
                 </h2>
 
-                <p className="text-zinc-400 text-lg md:text-xl font-light leading-relaxed max-w-xl">
-                  Bukan sekadar kode. Saya membangun <span className="text-white font-medium italic">ekosistem digital</span> yang menggabungkan presisi teknis dengan estetika premium yang tak lekang oleh waktu.
-                </p>
+                <p
+                  className="text-zinc-400 text-lg md:text-xl font-light leading-relaxed max-w-xl [&>b]:text-white [&>b]:font-medium [&>b]:italic"
+                  dangerouslySetInnerHTML={{ __html: t.about.paragraph }}
+                />
               </div>
 
               {/* Bento Stats */}
@@ -211,7 +232,7 @@ export default function About() {
                   }`}
                 >
                   <span className="relative z-10 flex items-center gap-3">
-                    {isDownloading ? "Analysing System..." : isDownloaded ? "CV Acquired" : "Download Resume"}
+                    {isDownloading ? t.about.downloading : isDownloaded ? t.about.downloaded : t.about.download}
                     {isDownloaded ? <CheckCircle2 size={18} /> : <FileText size={18} className="group-hover:rotate-12 transition-transform" />}
                   </span>
                   
@@ -234,7 +255,7 @@ export default function About() {
                     <Mail size={16} className="text-zinc-500 group-hover:text-secondary" />
                   </div>
                   <div>
-                    <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">Inquiry</p>
+                    <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">{t.about.inquiry}</p>
                     <p className="text-white font-bold group-hover:text-secondary transition-colors">dewagibran0@gmail.com</p>
                   </div>
                 </div>

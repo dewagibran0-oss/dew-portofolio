@@ -13,6 +13,16 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    // Pola yang disengaja & aman untuk proyek ini (tanpa React Compiler):
+    // - set-state-in-effect: sinkronisasi atribut DOM (tema/lang) -> state saat mount (anti-FOUC).
+    // - purity/immutability: pola standar React-Three-Fiber (Math.random di useMemo, mutasi uniform di useFrame).
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/purity": "off",
+      "react-hooks/immutability": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

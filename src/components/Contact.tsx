@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Send, Copy, Check, Mail, 
-  Linkedin, Github, Instagram, ArrowUpRight, 
+  Linkedin, Github, Instagram, 
   Terminal, ShieldCheck, Globe, Clock, Cpu
 } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 /**
  * Configuration Constants
@@ -23,6 +24,7 @@ const SOCIAL_LINKS = [
 ];
 
 export default function ContactProduction() {
+  const { t } = useLang();
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
@@ -52,10 +54,10 @@ export default function ContactProduction() {
     }
   };
 
-  if (!mounted) return <div className="min-h-[80vh] bg-[#030303]" />;
+  if (!mounted) return <div className="min-h-[80vh] bg-[var(--bg-deep)]" />;
 
   return (
-    <section className="relative py-32 md:py-48 px-6 bg-[#030303] overflow-hidden">
+    <section className="relative py-32 md:py-48 px-6 bg-[var(--bg-deep)] overflow-hidden">
       {/* Dynamic Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/[0.03] blur-[120px] rounded-full" />
@@ -77,7 +79,7 @@ export default function ContactProduction() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
               </span>
-              <span className="text-cyan-500 font-mono text-[10px] uppercase tracking-[0.3em] font-semibold">Ready_to_Collaborate</span>
+              <span className="text-cyan-500 font-mono text-[10px] uppercase tracking-[0.3em] font-semibold">{t.contact.badge}</span>
             </motion.div>
 
             <motion.div
@@ -87,17 +89,16 @@ export default function ContactProduction() {
               transition={{ delay: 0.1 }}
             >
               <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.85] mb-8 font-space">
-                Elevate Your <br />
-                <span className="text-zinc-800 italic font-light">Digital Core.</span>
+                {t.contact.titleTop} <br />
+                <span className="text-zinc-800 italic font-light">{t.contact.titleBottom}</span>
               </h2>
               <p className="text-zinc-500 text-lg md:text-xl font-light leading-relaxed max-w-md">
-                Menyatukan arsitektur teknis yang kuat dengan desain yang intuitif. 
-                Mari diskusikan visi Anda menjadi kenyataan digital.
+                {t.contact.paragraph}
               </p>
             </motion.div>
 
             <div className="flex flex-wrap gap-3">
-              {SOCIAL_LINKS.map((link, i) => (
+              {SOCIAL_LINKS.map((link) => (
                 <motion.a
                   key={link.name}
                   href={link.href}
@@ -117,7 +118,7 @@ export default function ContactProduction() {
               initial={{ opacity: 0, scale: 0.98 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="relative rounded-[2.5rem] bg-[#0A0A0A] border border-white/5 shadow-2xl overflow-hidden"
+              className="relative rounded-[2.5rem] bg-[var(--bg-card)] border border-white/5 shadow-2xl overflow-hidden"
             >
               {/* Terminal Title Bar */}
               <div className="bg-zinc-900/50 px-8 py-5 border-b border-white/5 flex items-center justify-between">
@@ -135,11 +136,10 @@ export default function ContactProduction() {
               <div className="p-8 md:p-14 space-y-12">
                 <div className="space-y-4">
                   <h3 className="text-zinc-400 font-mono text-sm uppercase tracking-[0.2em] flex items-center gap-2">
-                    <span className="text-cyan-500">{">"}</span> Initialize_Inquiry
+                    <span className="text-cyan-500">{">"}</span> {t.contact.initInquiry}
                   </h3>
                   <p className="text-zinc-600 font-mono text-xs leading-relaxed max-w-xl">
-                    Sistem siap menerima instruksi. Tekan tombol salin atau klik tombol kirim 
-                    untuk membuka protokol komunikasi langsung.
+                    {t.contact.terminalDesc}
                   </p>
                 </div>
 
@@ -152,7 +152,7 @@ export default function ContactProduction() {
                         <Mail size={24} />
                       </div>
                       <div>
-                        <div className="text-[10px] font-mono text-zinc-600 uppercase mb-1 tracking-widest">Master_Address</div>
+                        <div className="text-[10px] font-mono text-zinc-600 uppercase mb-1 tracking-widest">{t.contact.masterAddress}</div>
                         <div className="text-white font-mono text-sm md:text-xl font-bold tracking-tight">{EMAIL_DATA.display}</div>
                       </div>
                     </div>
@@ -165,11 +165,11 @@ export default function ContactProduction() {
                       <AnimatePresence mode="wait">
                         {copied ? (
                           <motion.span key="ok" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
-                            <Check size={16} /> DONE
+                            <Check size={16} /> {t.contact.copied}
                           </motion.span>
                         ) : (
                           <motion.span key="copy" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
-                            <Copy size={16} /> COPY_UID
+                            <Copy size={16} /> {t.contact.copy}
                           </motion.span>
                         )}
                       </AnimatePresence>
@@ -187,7 +187,7 @@ export default function ContactProduction() {
                     whileHover={{ x: 5 }}
                     className="flex items-center gap-3 text-cyan-500 font-mono text-[11px] font-bold uppercase tracking-[0.2em] group"
                   >
-                    Open_In_Mail_App <Send size={14} className="group-hover:rotate-12 transition-transform" />
+                    {t.contact.openMail} <Send size={14} className="group-hover:rotate-12 transition-transform" />
                   </motion.a>
                 </div>
               </div>
@@ -205,28 +205,28 @@ export default function ContactProduction() {
           <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-2xl flex items-center gap-4">
             <Clock className="text-zinc-700" size={20} />
             <div>
-              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">Current_Local_Time</p>
+              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">{t.contact.localTime}</p>
               <p className="text-xs font-mono text-zinc-400">{currentTime || "SYNCING..."} WIB</p>
             </div>
           </div>
           <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-2xl flex items-center gap-4">
             <Globe className="text-zinc-700" size={20} />
             <div>
-              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">Base_Location</p>
+              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">{t.contact.baseLocation}</p>
               <p className="text-xs font-mono text-zinc-400">JAKARTA, ID_SYS</p>
             </div>
           </div>
           <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-2xl flex items-center gap-4">
             <Cpu className="text-zinc-700" size={20} />
             <div>
-              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">Uptime_Status</p>
+              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">{t.contact.uptime}</p>
               <p className="text-xs font-mono text-zinc-400">99.9%_OPERATIONAL</p>
             </div>
           </div>
           <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-2xl flex items-center gap-4">
             <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
             <div>
-              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">Global_Latency</p>
+              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">{t.contact.latency}</p>
               <p className="text-xs font-mono text-zinc-400">STABLE_12MS</p>
             </div>
           </div>

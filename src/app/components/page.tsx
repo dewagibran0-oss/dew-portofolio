@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { 
-  Copy, Check, Code2, Eye, Sparkles, Menu, X, ChevronLeft, Layout, 
-  MousePointer2, Zap, Smartphone, Monitor, Github, Twitter, 
-  ExternalLink, Command, Layers, Palette, Boxes, Cpu, 
-  ShieldCheck, Rocket, Fingerprint, Share2, MessageSquare, ArrowRight,
-  Search, Terminal, Globe, ZapOff, Play, Activity, Radio, Lock
+import {
+  Copy, Check, Menu, X, ChevronLeft, Zap, Smartphone, Monitor, Layers, Cpu,
+  ShieldCheck, Rocket, Fingerprint, MessageSquare, ArrowRight, Terminal, Globe, Activity
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   BookOpen, Terminal, Layers, Cpu, ChevronRight, Search, 
@@ -298,7 +298,7 @@ export default function DocsPage() {
                         <Lightbulb size={28} />
                       </div>
                       <h4 className="text-white text-xl font-bold mb-4">Engineering Standard</h4>
-                      <p className="text-slate-500 leading-relaxed">Gunakan prinsip DRY (Don't Repeat Yourself) dan pastikan setiap komponen memiliki dokumentasi prop-types yang jelas.</p>
+                      <p className="text-slate-500 leading-relaxed">Gunakan prinsip DRY (Don&apos;t Repeat Yourself) dan pastikan setiap komponen memiliki dokumentasi prop-types yang jelas.</p>
                     </div>
                     <div className="p-8 rounded-[2.5rem] bg-[#030712] border border-white/5 hover:border-purple-500/30 transition-all duration-500 group">
                       <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500 mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-transform">

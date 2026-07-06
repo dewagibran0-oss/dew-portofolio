@@ -9,11 +9,20 @@ import {
   useMotionTemplate,
   AnimatePresence 
 } from "framer-motion";
-import { 
-  Cpu, Layers, ArrowRight, Database, Zap, 
-  ShieldCheck, MousePointer2, X, CheckCircle2,
+import {
+  Cpu, Layers, ArrowRight, Database, Zap,
+  X, CheckCircle2,
   Sparkles, Globe, ZapIcon, LucideIcon
 } from "lucide-react";
+import { useLang } from "@/lib/i18n";
+
+// Meta netral-bahasa (warna/ikon/tech). Teks diambil dari dictionary via useLang.
+const SERVICE_META: { id: string; color: string; icon: LucideIcon; tech: string[] }[] = [
+  { id: "01", color: "#3b82f6", icon: Cpu, tech: ["HTML", "CSS", "JavaScript"] },
+  { id: "02", color: "#a855f7", icon: Database, tech: ["SQL", "Advanced Excel", "Google Sheets"] },
+  { id: "03", color: "#fbbf24", icon: Zap, tech: ["Windows/OS", "Hardware", "Networking"] },
+  { id: "04", color: "#10b981", icon: Layers, tech: ["Office 365", "Workflow Design", "System Log"] },
+];
 
 // --- Types ---
 interface Service {
@@ -33,6 +42,7 @@ const EASE_CUSTOM = [0.16, 1, 0.3, 1] as const;
 
 // --- Sub-Component: Detail Modal ---
 const ServiceModal = ({ service, isOpen, onClose }: { service: Service; isOpen: boolean; onClose: () => void }) => {
+  const { t } = useLang();
   return (
     <AnimatePresence>
       {isOpen && (
@@ -49,7 +59,7 @@ const ServiceModal = ({ service, isOpen, onClose }: { service: Service; isOpen: 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[700px] md:h-auto max-h-[90vh] bg-[#0C0C0E] border border-white/10 rounded-[3rem] z-[101] overflow-hidden shadow-2xl"
+            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[700px] md:h-auto max-h-[90vh] bg-[var(--bg-card)] border border-white/10 rounded-[3rem] z-[101] overflow-hidden shadow-2xl"
           >
             <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: service.color }} />
             
@@ -78,7 +88,7 @@ const ServiceModal = ({ service, isOpen, onClose }: { service: Service; isOpen: 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                 <div className="space-y-4">
                   <h4 className="text-white font-bold flex items-center gap-2 italic">
-                    <Sparkles size={16} className="text-secondary" /> Key Capabilities
+                    <Sparkles size={16} className="text-secondary" /> {t.services.capabilities}
                   </h4>
                   {service.features.map(f => (
                     <div key={f} className="flex items-center gap-3 text-zinc-500 text-sm">
@@ -88,11 +98,11 @@ const ServiceModal = ({ service, isOpen, onClose }: { service: Service; isOpen: 
                 </div>
                 <div className="space-y-4">
                   <h4 className="text-white font-bold flex items-center gap-2 italic">
-                    <ZapIcon size={16} className="text-secondary" /> Impact
+                    <ZapIcon size={16} className="text-secondary" /> {t.services.impact}
                   </h4>
                   <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
                     <span className="text-4xl font-black text-white tracking-tighter">{service.stats}</span>
-                    <p className="text-xs text-zinc-600 mt-2 uppercase tracking-widest">Performance Increase</p>
+                    <p className="text-xs text-zinc-600 mt-2 uppercase tracking-widest">{t.services.perfIncrease}</p>
                   </div>
                 </div>
               </div>
@@ -101,7 +111,7 @@ const ServiceModal = ({ service, isOpen, onClose }: { service: Service; isOpen: 
                 onClick={onClose}
                 className="w-full py-5 bg-white text-black font-black text-xs uppercase tracking-[0.3em] rounded-2xl hover:bg-secondary transition-colors"
               >
-                Close Analysis
+                {t.services.close}
               </button>
             </div>
           </motion.div>
@@ -113,6 +123,7 @@ const ServiceModal = ({ service, isOpen, onClose }: { service: Service; isOpen: 
 
 // --- Sub-Component: Service Card ---
 const ServiceCard = ({ service, index }: { service: Service; index: number }) => {
+  const { t } = useLang();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
@@ -145,7 +156,7 @@ const ServiceCard = ({ service, index }: { service: Service; index: number }) =>
         style={{ rotateX, rotateY, perspective: 1000 }}
         className="group relative h-[500px] cursor-none"
       >
-        <div className="relative h-full w-full bg-[#09090B] border border-white/5 rounded-[3rem] p-10 overflow-hidden flex flex-col group-hover:border-white/20 transition-all duration-500">
+        <div className="relative h-full w-full bg-[var(--bg-panel)] border border-white/5 rounded-[3rem] p-10 overflow-hidden flex flex-col group-hover:border-white/20 transition-all duration-500">
           <motion.div className="absolute inset-0 pointer-events-none" style={{ background: spotlight }} />
           
           <div className="relative z-10 flex justify-between items-start mb-10">
@@ -166,7 +177,7 @@ const ServiceCard = ({ service, index }: { service: Service; index: number }) =>
               onClick={() => setIsModalOpen(true)}
               className="flex items-center gap-3 py-2 px-4 rounded-full bg-white/5 border border-white/5 hover:border-secondary/50 hover:bg-white/10 transition-all cursor-pointer group/link"
             >
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover/link:text-white">Analyze Case</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover/link:text-white">{t.services.analyze}</span>
               <ArrowRight size={14} className="text-zinc-600 group-hover/link:text-secondary group-hover/link:translate-x-1 transition-all" />
             </div>
           </div>
@@ -187,60 +198,30 @@ const ServiceCard = ({ service, index }: { service: Service; index: number }) =>
 export default function Services() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-10%" });
+  const { t } = useLang();
 
-  const services: Service[] = useMemo(() => [
-    {
-      id: "01",
-      title: "Web Ecosystem",
-      subtitle: "Web Development",
-      description: "Membangun sistem informasi berbasis web yang responsif dengan fokus pada efisiensi operasional.",
-      longDescription: "Implementasi solusi web menggunakan HTML5, CSS3, Javascript, NodeJs, ReactJs, PHP, dan Laravel untuk digitalisasi alur kerja administrasi dan manajemen data.",
-      features: ["Responsive Design", "Clean Code", "Optimized Loading"],
-      tech: ["HTML", "CSS", "JavaScript"],
-      color: "#3b82f6",
-      icon: Cpu, // Menggambarkan kemampuan coding kamu
-      stats: "SEO Friendly"
-    },
-    {
-      id: "02",
-      title: "Data Integrity",
-      subtitle: "Digital Administration",
-      description: "Manajemen dokumen dan database operasional dengan tingkat akurasi tinggi.",
-      longDescription: "Pengelolaan dokumen Delivery Order (DO) dan logistik pelayaran menggunakan sistem digital untuk memastikan keamanan data aset perusahaan.",
-      features: ["Database Management", "Zero-Error Entry", "Digital Filing"],
-      tech: ["SQL", "Advanced Excel", "Google Sheets"],
-      color: "#a855f7",
-      icon: Database, // Menggambarkan fokus kamu di admin data
-      stats: "100% Accuracy"
-    },
-    {
-      id: "03",
-      title: "Infra-Support",
-      subtitle: "IT Support & Ops",
-      description: "Maintenance infrastruktur IT internal dan troubleshooting perangkat keras/lunak.",
-      longDescription: "Memastikan kelancaran operasional harian kantor melalui pemeliharaan sistem informasi dan dukungan teknis proaktif bagi pengguna.",
-      features: ["Hardware Maintenance", "System Diagnostics", "User Support"],
-      tech: ["Windows/OS", "Hardware", "Networking"],
-      color: "#fbbf24",
-      icon: Zap, // Menggambarkan kecepatan respon IT Support
-      stats: "Fast Response"
-    },
-    {
-      id: "04",
-      title: "Workflow Logic",
-      subtitle: "System Architecture",
-      description: "Otomatisasi alur kerja administrasi konvensional menjadi digital (paperless).",
-      longDescription: "Merancang logika sistem informasi sederhana yang mengintegrasikan pengadaan (procurement) dengan dokumentasi digital yang terpusat.",
-      features: ["Paperless Flow", "Procurement Logic", "Task Automation"],
-      tech: ["Office 365", "Workflow Design", "System Log"],
-      color: "#10b981",
-      icon: Layers, // Menggambarkan lapisan sistem yang kamu bangun
-      stats: "Efficient Ops"
-    }
-  ], []);
+  const services: Service[] = useMemo(
+    () =>
+      SERVICE_META.map((m) => {
+        const d = t.services.items[m.id];
+        return {
+          id: m.id,
+          color: m.color,
+          icon: m.icon,
+          tech: m.tech,
+          title: d.title,
+          subtitle: d.subtitle,
+          description: d.description,
+          longDescription: d.longDescription,
+          features: d.features,
+          stats: d.stats,
+        };
+      }),
+    [t]
+  );
 
   return (
-    <section ref={sectionRef} id="services" className="relative py-40 bg-[#020202] overflow-hidden">
+    <section ref={sectionRef} id="services" className="relative py-40 bg-[var(--bg-section)] overflow-hidden">
       {/* Background Orbs */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-blue-600/10 blur-[150px] rounded-full" />
@@ -258,15 +239,15 @@ export default function Services() {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-[1px] w-12 bg-secondary" />
-                <span className="text-secondary font-mono text-xs tracking-[0.5em] uppercase">Core Expertise</span>
+                <span className="text-secondary font-mono text-xs tracking-[0.5em] uppercase">{t.services.label}</span>
               </div>
               <h2 className="text-7xl md:text-9xl font-black text-white leading-[0.8] tracking-tighter uppercase italic">
-                Defined <br /> <span className="text-zinc-800">Future.</span>
+                {t.services.titleTop} <br /> <span className="text-zinc-800">{t.services.titleBottom}</span>
               </h2>
             </div>
             <div className="lg:max-w-sm">
               <p className="text-zinc-500 text-lg font-light leading-relaxed border-l-2 border-secondary pl-8">
-                Kami menggabungkan seni desain dengan presisi rekayasa untuk menciptakan solusi digital yang tak tertandingi.
+                {t.services.intro}
               </p>
             </div>
           </motion.div>
@@ -287,18 +268,18 @@ export default function Services() {
         >
           <div 
             onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="group relative bg-[#080808] rounded-[3.9rem] p-16 md:p-24 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12 cursor-pointer transition-all hover:bg-black"
+            className="group relative bg-[var(--bg-card)] rounded-[3.9rem] p-16 md:p-24 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12 cursor-pointer transition-all hover:bg-black"
           >
             <div className="relative z-10">
-              <h3 className="text-5xl md:text-7xl font-bold text-white tracking-tighter mb-4">Mulai Proyek <br /> Impian Anda.</h3>
-              <p className="text-zinc-500 text-xl font-light">Konsultasikan visi Anda secara gratis hari ini.</p>
+              <h3 className="text-5xl md:text-7xl font-bold text-white tracking-tighter mb-4 whitespace-pre-line">{t.services.ctaTitle}</h3>
+              <p className="text-zinc-500 text-xl font-light">{t.services.ctaSubtitle}</p>
             </div>
             
             <div className="relative z-10">
               <div className="w-40 h-40 rounded-full border border-white/10 flex items-center justify-center group-hover:scale-110 group-hover:border-secondary transition-all duration-700">
                 <div className="text-center group-hover:text-secondary transition-colors">
                   <Globe className="mx-auto mb-2 animate-spin-slow" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Connect Now</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest">{t.services.connect}</span>
                 </div>
               </div>
             </div>

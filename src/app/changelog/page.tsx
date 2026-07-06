@@ -3,14 +3,10 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  GitCommit, 
-  Rocket, 
-  Bug, 
-  Zap, 
+  GitCommit,    
   Clock, 
   ChevronLeft,
   Search,
-  Filter,
   ArrowUpRight
 } from "lucide-react";
 import Link from "next/link";
@@ -186,7 +182,7 @@ export default function ChangelogPage() {
 
           <div className="space-y-12">
             <AnimatePresence mode="popLayout">
-              {filteredData.map((item, idx) => (
+              {filteredData.map((item) => (
                 <motion.div 
                   key={item.version}
                   layout
@@ -260,7 +256,7 @@ export default function ChangelogPage() {
                 animate={{ opacity: 1 }}
                 className="text-center py-20 bg-slate-900/20 rounded-3xl border border-dashed border-slate-800"
               >
-                <p className="text-slate-500">Tidak ada catatan yang ditemukan untuk "{searchQuery}"</p>
+                <p className="text-slate-500">Tidak ada catatan yang ditemukan untuk &quot;{searchQuery}&quot;</p>
               </motion.div>
             )}
           </div>

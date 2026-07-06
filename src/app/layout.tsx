@@ -1,57 +1,150 @@
-"use client";
-
-import { usePathname } from "next/navigation";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
-import dynamic from "next/dynamic"; // Import dynamic untuk Lazy Loading
+import { cookies } from "next/headers";
 import "./globals.css";
+import Providers from "./providers";
+import type { Lang } from "@/lib/dictionary";
 
-// 1. Optimasi Font: Gunakan variable font dan preload secara efisien
-const spaceGrotesk = Space_Grotesk({ 
-  subsets: ["latin"], 
+// --- Font (self-hosted via next/font, display swap utk cegah invisible text / CLS) ---
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
   variable: "--font-space",
-  display: 'swap', // Mencegah invisible text saat loading
-  adjustFontFallback: true, // Optimasi CLS
-});
-
-const inter = Inter({ 
-  subsets: ["latin"], 
-  variable: "--font-inter",
-  display: 'swap',
+  display: "swap",
   adjustFontFallback: true,
 });
 
-// 2. Lazy Load Komponen Berat: Cursor biasanya menggunakan JS berat (Framer Motion/Canvas)
-// Kita load hanya di sisi klien dan setelah LCP (Largest Contentful Paint)
-const Cursor = dynamic(() => import("@/components/ui/Cursor"), { 
-  ssr: false 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  adjustFontFallback: true,
 });
 
-const Navbar = dynamic(() => import("@/components/Navbar"), { 
-  ssr: true // Tetap SSR agar navigasi cepat, tapi dipisah dari bundle utama
-});
+const SITE_URL = "https://dewagibran.vercel.app";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  
-  // Gunakan useMemo jika daftar rute sangat panjang, namun untuk ini cukup begini
-  const hideNavbarRoutes = ["/archive", "/changelog", "/docs", "/components"];
-  const shouldHideNavbar = hideNavbarRoutes.includes(pathname);
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Dewa Gibran — Digital Architect & Web Developer",
+    template: "%s | Dewa Gibran",
+  },
+  description:
+    "Portofolio Dewa Gibran — Web Developer & Digital System Architect asal Jakarta. Membangun ekosistem digital dengan Next.js, React, Laravel, dan desain premium berperforma tinggi.",
+  keywords: [
+    "Dewa Gibran",
+    "Web Developer",
+    "Digital Architect",
+    "Portfolio",
+    "Next.js",
+    "React",
+    "Laravel",
+    "Frontend Developer",
+    "Jakarta",
+    "System Support",
+  ],
+  authors: [{ name: "Dewa Ahmad Gibran" }],
+  creator: "Dewa Ahmad Gibran",
+  applicationName: "Dewa Gibran Portfolio",
+  alternates: {
+    canonical: "/",
+    languages: {
+      "id-ID": "/",
+      "en-US": "/",
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    alternateLocale: "en_US",
+    url: SITE_URL,
+    siteName: "Dewa Gibran Portfolio",
+    title: "Dewa Gibran — Digital Architect & Web Developer",
+    description:
+      "Membangun ekosistem digital dengan presisi teknis dan estetika premium. Next.js · React · Laravel.",
+    images: [
+      {
+        url: "/profile.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Dewa Gibran — Digital Architect",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Dewa Gibran — Digital Architect & Web Developer",
+    description:
+      "Membangun ekosistem digital dengan presisi teknis dan estetika premium.",
+    images: ["/profile.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f8fc" },
+  ],
+};
+
+/**
+ * Inline script anti-FOUC untuk TEMA: mengeset data-theme dari localStorage
+ * SEBELUM paint pertama agar tidak ada kedipan tema.
+ * Bahasa TIDAK di sini — ditentukan server via cookie (lihat RootLayout) agar
+ * SSR & client konsisten dan tidak memicu hydration-mismatch.
+ */
+const themeInitScript = `
+(function(){
+  try {
+    var t = localStorage.getItem('theme');
+    if (t !== 'light' && t !== 'dark') t = 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+    document.documentElement.style.colorScheme = t;
+  } catch (e) {}
+})();
+`;
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // Baca bahasa dari cookie di server → render <html lang> yang benar
+  // sehingga HTML SSR cocok dengan render pertama client.
+  const cookieStore = await cookies();
+  const lang: Lang = cookieStore.get("lang")?.value === "en" ? "en" : "id";
 
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable} bg-[#020617] scroll-smooth`}>
-      <body className="font-sans text-white antialiased selection:bg-cyan-500/30 selection:text-white overflow-x-hidden">
-        
-        {/* Cursor di-load secara dinamis agar tidak membebani loading awal */}
-        <Cursor />
-
-        {!shouldHideNavbar && <Navbar />}
-
-        {/* 3. Optimasi Konten: Berikan Role aria dan pastikan min-h tidak menyebabkan pergeseran */}
-        <main id="main-content" className="relative min-h-screen">
-          {children}
-        </main>
-
-        <div id="modal-root" />
+    <html
+      lang={lang}
+      data-theme="dark"
+      className={`${spaceGrotesk.variable} ${inter.variable} scroll-smooth`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="font-sans antialiased selection:bg-cyan-500/30 overflow-x-hidden bg-base">
+        <Providers initialLang={lang}>
+          <main id="main-content" className="relative min-h-screen">
+            {children}
+          </main>
+          <div id="modal-root" />
+        </Providers>
       </body>
     </html>
   );

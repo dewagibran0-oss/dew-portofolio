@@ -1,25 +1,26 @@
 "use client";
 
-import { motion, useScroll, useTransform, AnimatePresence, useSpring, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useSpring, useReducedMotion, type MotionValue } from "framer-motion";
 import { useRef, useState, useEffect, memo } from "react";
 import Link from "next/link";
-import HeroScene from "./HeroScene"; 
+import HeroScene from "./HeroScene";
+import { useLang } from "@/lib/i18n";
 
 // 1. Background Layer dengan Optimal Re-rendering
 const BackgroundLayer = memo(() => (
   <div className="absolute inset-0 z-0 pointer-events-none transform-gpu overflow-hidden">
     <HeroScene />
-    
+
     {/* High-End Ambient Lighting */}
     <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/10 blur-[140px] rounded-full mix-blend-screen opacity-40 animate-pulse" />
     <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[140px] rounded-full mix-blend-screen opacity-30" />
-    
-    {/* High-End Grainy Texture Overlay */}
-    <div className="absolute inset-0 opacity-[0.2] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-soft-light pointer-events-none" />
-    
+
+    {/* Grainy Texture Overlay — di-host lokal (hindari request pihak ketiga) */}
+    <div className="absolute inset-0 opacity-[0.2] bg-[url('/noise.svg')] mix-blend-soft-light pointer-events-none" />
+
     {/* Cinematic Vignette & Bottom Masking */}
-    <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/60 via-transparent to-[#020617]" />
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_0%,#020617_95%)]" />
+    <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg)]/60 via-transparent to-[var(--bg)]" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_0%,var(--bg)_95%)]" />
   </div>
 ));
 BackgroundLayer.displayName = "BackgroundLayer";
@@ -28,6 +29,7 @@ export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const { t } = useLang();
 
   useEffect(() => {
     setIsLoaded(true);
@@ -57,7 +59,7 @@ export default function Hero() {
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-[#020617] selection:bg-cyan-500/30"
+      className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-[var(--bg)] selection:bg-cyan-500/30"
     >
       <BackgroundLayer />
 
@@ -85,7 +87,7 @@ export default function Hero() {
                   <span className="relative h-2 w-2 rounded-full bg-cyan-500"></span>
                 </span>
                 <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/60">
-                  Systems Architect // 2026.V1
+                  {t.hero.badge}
                 </span>
               </div>
             </motion.div>
@@ -127,9 +129,10 @@ export default function Hero() {
               transition={{ delay: 1, duration: 1.2 }}
               className="max-w-2xl text-center space-y-12"
             >
-              <p className="text-white/40 text-[11px] md:text-xl font-light leading-relaxed tracking-widest uppercase italic px-4">
-                Redefining <span className="text-white font-medium">Digital Frontiers</span> through autonomous logic and elite aesthetic engineering.
-              </p>
+              <p
+                className="text-white/40 text-[11px] md:text-xl font-light leading-relaxed tracking-widest uppercase italic px-4 [&>b]:text-white [&>b]:font-medium [&>b]:not-italic"
+                dangerouslySetInnerHTML={{ __html: t.hero.description }}
+              />
 
               <div className="flex flex-col sm:flex-row gap-5 justify-center items-center w-full max-w-lg mx-auto">
                 {/* Tombol ke /archive */}
@@ -139,7 +142,7 @@ export default function Hero() {
                     whileTap={{ scale: 0.97 }}
                     className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] rounded-sm transition-all relative group overflow-hidden"
                   >
-                    <span className="relative z-10 group-hover:text-white transition-colors duration-500">Launch Project</span>
+                    <span className="relative z-10 group-hover:text-white transition-colors duration-500">{t.hero.launch}</span>
                     <div className="absolute inset-0 bg-cyan-500 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                   </motion.button>
                 </Link>
@@ -151,7 +154,7 @@ export default function Hero() {
                   whileTap={{ scale: 0.97 }}
                   className="w-full sm:w-1/2 py-5 border border-white/10 backdrop-blur-md text-white text-[11px] font-black uppercase tracking-[0.3em] rounded-sm transition-all"
                 >
-                  Establish Link
+                  {t.hero.link}
                 </motion.button>
               </div>
             </motion.div>
@@ -166,17 +169,18 @@ export default function Hero() {
 }
 
 // Sub-Component: Right Side HUD
-function ScrollHUD({ smoothProgress }: { smoothProgress: any }) {
+function ScrollHUD({ smoothProgress }: { smoothProgress: MotionValue<number> }) {
+  const { t } = useLang();
   return (
     <div className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-20">
       <div className="h-40 w-[1px] bg-white/5 relative">
-        <motion.div 
+        <motion.div
           style={{ scaleY: smoothProgress }}
-          className="absolute top-0 w-full bg-cyan-500 origin-top h-full shadow-[0_0_10px_rgba(34,211,238,0.8)]" 
+          className="absolute top-0 w-full bg-cyan-500 origin-top h-full shadow-[0_0_10px_rgba(34,211,238,0.8)]"
         />
       </div>
       <span className="text-[8px] font-mono text-cyan-500 uppercase tracking-[0.5em] rotate-90 whitespace-nowrap opacity-50">
-        Progress // Trace
+        {t.hero.hud}
       </span>
     </div>
   );
@@ -184,22 +188,23 @@ function ScrollHUD({ smoothProgress }: { smoothProgress: any }) {
 
 // Sub-Component: Frame Elements (Professional Technical Look)
 function TechnicalFrame() {
+  const { t } = useLang();
   return (
     <div className="absolute inset-0 z-[5] pointer-events-none p-6 md:p-10">
       {/* Corner Accents */}
       <div className="absolute top-10 left-10 w-12 h-12 border-t border-l border-white/10" />
       <div className="absolute bottom-10 right-10 w-12 h-12 border-b border-r border-white/10" />
-      
+
       {/* Real-time Meta-data (Professional Look) */}
       <div className="absolute bottom-10 left-10 hidden md:flex flex-col gap-2">
         <div className="flex gap-6">
           <div className="flex flex-col">
-            <span className="text-[7px] text-white/20 uppercase tracking-widest font-mono">Location</span>
-            <span className="text-[9px] text-white/50 font-mono">IDN // JKTA</span>
+            <span className="text-[7px] text-white/40 uppercase tracking-widest font-mono">{t.hero.location}</span>
+            <span className="text-[9px] text-white/60 font-mono">IDN // JKTA</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[7px] text-white/20 uppercase tracking-widest font-mono">Status</span>
-            <span className="text-[9px] text-cyan-500 font-mono animate-pulse">Live</span>
+            <span className="text-[7px] text-white/40 uppercase tracking-widest font-mono">{t.hero.status}</span>
+            <span className="text-[9px] text-cyan-500 font-mono animate-pulse">{t.hero.live}</span>
           </div>
         </div>
       </div>

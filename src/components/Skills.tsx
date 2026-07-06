@@ -3,6 +3,7 @@
 import React, { useRef, useMemo } from "react";
 import { motion, useInView, Variants } from "framer-motion";
 import { IconType } from "react-icons";
+import { useLang } from "@/lib/i18n";
 import { 
   SiNextdotjs, SiTypescript, SiReact, SiTailwindcss, 
   SiNodedotjs, SiPostgresql, SiFlutter, SiDart, SiMysql, SiMongodb, SiDocker, 
@@ -74,6 +75,7 @@ const cardVariants: Variants = {
 
 const SkillCard = ({ skill }: { skill: Skill }) => {
   const Icon = skill.icon;
+  const { t } = useLang();
 
   return (
     <motion.div
@@ -103,7 +105,7 @@ const SkillCard = ({ skill }: { skill: Skill }) => {
           <div className="flex items-center justify-center md:justify-start gap-2 mt-1">
             <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 group-hover:text-gray-300 transition-colors">
-              {skill.level}
+              {t.skills.levels[skill.level] ?? skill.level}
             </p>
           </div>
         </div>
@@ -170,6 +172,7 @@ const MarqueeRow = ({
 export default function Skills() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(scrollRef, { once: true, margin: "-10% 0px" });
+  const { t } = useLang();
 
   const techSkills = useMemo(() => SKILLS_DATA.filter(s => s.category !== "creative"), []);
   const creativeSkills = useMemo(() => SKILLS_DATA.filter(s => s.category === "creative"), []);
@@ -178,7 +181,7 @@ export default function Skills() {
     <section 
       id="skills" 
       ref={scrollRef}
-      className="relative w-full py-32 md:py-48 overflow-hidden bg-[#020617]"
+      className="relative w-full py-32 md:py-48 overflow-hidden bg-[var(--bg)]"
     >
       {/* Decorative Background */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none" />
@@ -194,9 +197,9 @@ export default function Skills() {
             className="max-w-4xl"
           >
             <h2 className="text-7xl md:text-[10rem] font-black text-white tracking-[-0.06em] leading-[0.8] uppercase">
-              Toolbox <br />
+              {t.skills.titleTop} <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-400">
-                & Stack
+                {t.skills.titleBottom}
               </span>
             </h2>
           </motion.div>
@@ -208,14 +211,14 @@ export default function Skills() {
             className="flex flex-col gap-5 border-l border-white/10 pl-8"
           >
             <p className="text-gray-400 text-sm md:text-lg max-w-xs leading-relaxed">
-              Kombinasi antara presisi pemrograman dan kebebasan kreatif untuk membangun produk digital yang utuh.
+              {t.skills.desc}
             </p>
             <div className="flex gap-3">
               <span className="px-4 py-1.5 bg-cyan-500/10 text-cyan-400 text-[10px] font-mono rounded-full border border-cyan-500/20 uppercase tracking-widest font-bold">
-                Engineering
+                {t.skills.tagEngineering}
               </span>
               <span className="px-4 py-1.5 bg-purple-500/10 text-purple-400 text-[10px] font-mono rounded-full border border-purple-500/20 uppercase tracking-widest font-bold">
-                Design
+                {t.skills.tagDesign}
               </span>
             </div>
           </motion.div>

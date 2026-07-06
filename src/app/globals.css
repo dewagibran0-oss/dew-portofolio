@@ -9,40 +9,101 @@
   --color-white-soft: #e5e7eb;
 }
 
+/*
+ * ============================================================
+ *  THEME ENGINE (Dark default / Light variant)
+ *  Nilai DARK identik dengan desain awal → tampilan gelap tidak berubah.
+ *  Mode terang meng-override token warna + palet Tailwind (var(--color-*))
+ *  sehingga hampir semua utility (text-white, text-zinc-500, dsb) ikut
+ *  berbalik tanpa perlu menyentuh ratusan class satu per satu.
+ * ============================================================
+ */
 @layer base {
-  :root {
-    --bg-color: #020617;
-    /* Gunakan color-scheme untuk membantu browser optimasi rendering engine */
+  :root,
+  html[data-theme="dark"] {
     color-scheme: dark;
+
+    /* Background tokens (menggantikan literal hex gelap di komponen) */
+    --bg: #020617;
+    --bg-section: #020202;
+    --bg-elevated: #050505;
+    --bg-deep: #030303;
+    --bg-card: #0a0a0a;
+    --bg-panel: #09090b;
+
+    /* Semantic UI tokens */
+    --hairline: rgba(255, 255, 255, 0.1);
   }
 
+  html[data-theme="light"] {
+    color-scheme: light;
+
+    /* Background tokens versi terang */
+    --bg: #f6f8fc;
+    --bg-section: #eef2f8;
+    --bg-elevated: #ffffff;
+    --bg-deep: #f1f4fa;
+    --bg-card: #ffffff;
+    --bg-panel: #ffffff;
+
+    --hairline: rgba(15, 23, 42, 0.12);
+
+    /* --- Palette remap: balikkan makna warna untuk mode terang --- */
+    /* "white" = warna teks utama → jadi gelap; dipakai juga utk surface tipis */
+    --color-white: #0f172a;
+    --color-black: #ffffff;
+
+    /* Skala abu netral (dibalik + dijaga kontras AA utk teks kecil) */
+    --color-zinc-300: #334155;
+    --color-zinc-400: #475569;
+    --color-zinc-500: #52627a;
+    --color-zinc-600: #5b6b82;
+    --color-zinc-700: #64748b;
+    --color-zinc-800: #cbd5e1;
+    --color-zinc-900: #e2e8f0;
+
+    --color-gray-300: #334155;
+    --color-gray-400: #475569;
+    --color-gray-500: #52627a;
+    --color-gray-600: #5b6b82;
+    --color-gray-700: #64748b;
+
+    /* Aksen sedikit digelapkan agar teks aksen lolos kontras di latar terang */
+    --color-secondary: #0e7490;
+    --color-cyan-400: #0891b2;
+    --color-cyan-500: #0e7490;
+    --color-primary: #2563eb;
+  }
+}
+
+@layer base {
   html {
-    background: var(--bg-color);
-    /* Optimasi Scroll: Gunakan smooth-scroll hanya jika user tidak keberatan (Aksesibilitas) */
+    background: var(--bg);
     @media (prefers-reduced-motion: no-preference) {
       scroll-behavior: smooth;
     }
   }
 
   body {
-    background: var(--bg-color);
-    color: #e5e7eb;
-    /* Sembunyikan kursor asli */
+    background: var(--bg);
+    color: var(--color-white-soft);
     cursor: none;
-    /* PERFORMANCE: Mencegah horizontal scroll yang memicu layout recalculation */
     overflow-x: hidden;
-    /* PERFORMANCE: Membantu text rendering lebih tajam tanpa beban CPU tinggi */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeSpeed;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
-  /* Lenis optimization */
-  html.lenis {
-    height: auto;
+  html[data-theme="light"] body {
+    color: #1e293b;
   }
-  .lenis.lenis-smooth {
-    scroll-behavior: auto !important;
+
+  /* Perangkat tanpa mouse (sentuh) → tampilkan kursor asli */
+  @media (hover: none) {
+    body {
+      cursor: auto;
+    }
   }
 
   ::selection {
@@ -52,22 +113,22 @@
 }
 
 @layer utilities {
-  /* PERFORMANCE GLASSMORPHISM */
+  /* Token background helper */
+  .bg-base {
+    background-color: var(--bg);
+  }
+
   .glass {
-    background: rgba(10, 10, 10, 0.6); /* Lebih gelap agar kontras teks tinggi (Lighthouse SEO) */
-    /* PERFORMANCE: Backdrop filter berat bagi GPU mobile, gunakan hanya jika didukung */
+    background: rgba(10, 10, 10, 0.6);
     @supports (backdrop-filter: blur(12px)) {
       backdrop-filter: blur(12px);
       background: rgba(255, 255, 255, 0.03);
     }
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    /* Memaksa browser menggunakan Hardware Acceleration */
+    border: 1px solid var(--hairline);
     transform: translateZ(0);
-    will-change: transform;
   }
 
   .glow-primary {
-    /* Gunakan opacity rendah untuk menghindari 'overdraw' pada mobile */
     box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
   }
 
@@ -76,15 +137,17 @@
   }
 }
 
-/* CUSTOM SCROLLBAR: Gunakan 'thin' untuk browser modern agar lebih ringan */
+/* CUSTOM SCROLLBAR */
 @supports (scrollbar-width: thin) {
   * {
     scrollbar-width: thin;
     scrollbar-color: #1f1f23 #050505;
   }
 }
+html[data-theme="light"] * {
+  scrollbar-color: #cbd5e1 #eef2f8;
+}
 
-/* Chrome/Safari Scrollbar: Minimalisir styling agar tidak membebani main thread */
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -97,4 +160,10 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary);
+}
+html[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #eef2f8;
+}
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
 }

@@ -13,7 +13,7 @@ import {
 } from "framer-motion";
 import { 
   ArrowLeft, Search, Github, ExternalLink,
-  ShieldCheck, Zap, Layers, Menu, Globe, Cpu, X
+  ShieldCheck, Zap, Menu, Globe, Cpu, X
 } from "lucide-react";
 
 /**

@@ -15,20 +15,24 @@ import {
   Server, ShieldCheck, Mail, 
   Cpu, LucideIcon
 } from "lucide-react";
+import { useLang } from "@/lib/i18n";
+import type { Dictionary } from "@/lib/dictionary";
+
+type FooterKey = keyof Dictionary["footer"];
 
 /**
  * --- 1. Types & Interfaces ---
  * Mendefinisikan tipe data agar TypeScript mengenali properti opsional.
  */
 interface NavItem {
-  label: string;
+  labelKey: FooterKey;  // Kunci ke dictionary.footer, bukan teks mentah
   href: string;
   badge?: string;    // Opsional: tidak semua punya badge
   external?: boolean; // Opsional: tidak semua link eksternal
 }
 
 interface NavGroup {
-  title: string;
+  titleKey: FooterKey;
   items: NavItem[];
 }
 
@@ -55,25 +59,24 @@ const FOOTER_CONFIG = {
     brand: "DEWA",
     dot: ".G",
     version: "PRO_CORE_v2.0.4",
-    bio: "Membangun infrastruktur digital masa depan dengan presisi tingkat tinggi dan performa yang tidak kenal kompromi.",
   },
   links: [
     {
-      title: "Navigation_Root",
+      titleKey: "navRoot",
       items: [
-        { label: "Core_Interface", href: "/" },
-        { label: "Laboratory", href: "/archive", badge: "New" },
-        { label: "System_Log", href: "/changelog" },
-        { label: "Knowledge_Base", href: "/docs" },
+        { labelKey: "coreInterface", href: "/" },
+        { labelKey: "laboratory", href: "/archive", badge: "New" },
+        { labelKey: "systemLog", href: "/changelog" },
+        { labelKey: "knowledgeBase", href: "/docs" },
       ],
     } as NavGroup,
     {
-      title: "Artifact_Archive",
+      titleKey: "archiveGroup",
       items: [
-        { label: "Projects_2026", href: "/archive?year=2026" },
-        { label: "Legacy_Vault", href: "/archive?status=archived" },
-        { label: "Source_Index", href: "https://github.com", external: true },
-        { label: "UI_Components", href: "/components" },
+        { labelKey: "projects2026", href: "/archive?year=2026" },
+        { labelKey: "legacyVault", href: "/archive?status=archived" },
+        { labelKey: "sourceIndex", href: "https://github.com", external: true },
+        { labelKey: "uiComponents", href: "/components" },
       ],
     } as NavGroup,
   ],
@@ -118,6 +121,7 @@ const SystemBadge = memo(({ label, value, icon: Icon, color }: StatItem) => (
 SystemBadge.displayName = "SystemBadge";
 
 export default function XSystemsFooterV2() {
+  const { t } = useLang();
   const [time, setTime] = useState<string>("");
   const [mounted, setMounted] = useState(false);
   const { scrollYProgress } = useScroll();
@@ -141,12 +145,12 @@ export default function XSystemsFooterV2() {
   if (!mounted) return null;
 
   return (
-    <footer className="relative bg-[#050505] pt-32 pb-12 px-8 overflow-hidden border-t border-white/[0.05]">
+    <footer className="relative bg-[var(--bg-elevated)] pt-32 pb-12 px-8 overflow-hidden border-t border-white/[0.05]">
       
       {/* Background Grid */}
       <motion.div style={{ y: smoothY }} className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute inset-0 bg-[radial-gradient(#1a1a1a_1px,transparent_1px)] [background-size:40px_40px]" />
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#050505] via-transparent to-[#050505]" />
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[var(--bg-elevated)] via-transparent to-[var(--bg-elevated)]" />
       </motion.div>
 
       <div className="max-w-[1600px] mx-auto relative z-10">
@@ -176,7 +180,7 @@ export default function XSystemsFooterV2() {
                 </div>
               </div>
               <p className="text-zinc-400 text-lg leading-relaxed font-light max-w-sm">
-                {FOOTER_CONFIG.identity.bio}
+                {t.footer.bio}
               </p>
             </motion.div>
 
@@ -191,24 +195,24 @@ export default function XSystemsFooterV2() {
           <div className="lg:col-span-4 grid grid-cols-2 gap-8">
             {FOOTER_CONFIG.links.map((group) => (
               <motion.div 
-                key={group.title}
+                key={group.titleKey}
                 className="space-y-8"
                 initial="initial" whileInView="animate" variants={containerVariants} viewport={{ once: true }}
               >
                 <motion.h4 variants={itemVariants} className="text-[10px] font-mono font-bold text-zinc-700 uppercase tracking-[0.4em]">
-                  {group.title}
+                  {t.footer[group.titleKey]}
                 </motion.h4>
                 <nav className="flex flex-col gap-5">
                   {group.items.map((item) => (
-                    <motion.div key={item.label} variants={itemVariants}>
-                      <Link 
+                    <motion.div key={item.labelKey} variants={itemVariants}>
+                      <Link
                         href={item.href}
                         target={item.external ? "_blank" : undefined}
                         className="group flex items-center justify-between text-zinc-500 hover:text-white transition-all font-mono text-[11px] tracking-widest"
                       >
                         <span className="flex items-center gap-2">
                           <span className="w-0 group-hover:w-3 h-[1px] bg-cyan-500 transition-all duration-300 overflow-hidden opacity-0 group-hover:opacity-100" />
-                          {item.label}
+                          {t.footer[item.labelKey]}
                         </span>
                         {item.badge && (
                           <span className="px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-500 text-[8px] animate-pulse">
@@ -238,18 +242,18 @@ export default function XSystemsFooterV2() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 text-cyan-500">
                     <Terminal size={20} />
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-[0.3em]">Initialize_Contact</span>
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-[0.3em]">{t.footer.initContact}</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white tracking-tight">Siap Untuk Deployment?</h3>
+                  <h3 className="text-2xl font-bold text-white tracking-tight">{t.footer.ready}</h3>
                   <p className="text-zinc-500 text-sm font-light leading-relaxed">
-                    Buka protokol komunikasi dan mari kita bangun sesuatu yang revolusioner bersama.
+                    {t.footer.readyDesc}
                   </p>
                 </div>
                 <Link 
                   href="mailto:dewagibran0@gmail.com"
                   className="group flex items-center justify-center gap-3 w-full py-4 bg-white text-black rounded-xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-cyan-500 transition-all active:scale-95"
                 >
-                  Start_Protocol <ArrowUpRight size={16} className="group-hover:rotate-45 transition-transform" />
+                  {t.footer.startProtocol} <ArrowUpRight size={16} className="group-hover:rotate-45 transition-transform" />
                 </Link>
               </div>
             </motion.div>
@@ -301,15 +305,15 @@ export default function XSystemsFooterV2() {
 
           <div className="flex flex-col items-center lg:items-end gap-4">
             <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em] leading-relaxed">
-              © 2026 <span className="text-white font-bold">DEWA_AHMAD_GIBRAN</span> // DESIGNED_AND_ENGINEERED
+              © 2026 <span className="text-white font-bold">DEWA_AHMAD_GIBRAN</span> {"// DESIGNED_AND_ENGINEERED"}
             </p>
             <div className="flex items-center gap-8">
-              <Link href="/privacy" className="text-[9px] font-mono text-zinc-700 hover:text-white transition-colors uppercase tracking-[0.3em]">Privacy_Protocol</Link>
+              <Link href="/privacy" className="text-[9px] font-mono text-zinc-700 hover:text-white transition-colors uppercase tracking-[0.3em]">{t.footer.privacy}</Link>
               <button 
                 onClick={handleBackToTop}
                 className="group flex items-center gap-3 text-[10px] font-mono text-cyan-500 uppercase tracking-[0.3em] hover:text-white transition-colors"
               >
-                Back_to_Root <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform duration-300" />
+                {t.footer.backToTop} <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform duration-300" />
               </button>
             </div>
           </div>
