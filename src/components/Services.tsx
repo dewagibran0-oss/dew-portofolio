@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useRef, useMemo, useState } from "react";
+import React, { useRef, useMemo, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { 
   motion, 
   useInView, 
   useMotionValue, 
   useSpring, 
   useMotionTemplate,
-  AnimatePresence 
+  useReducedMotion,
+  AnimatePresence
 } from "framer-motion";
 import {
   Cpu, Layers, ArrowRight, Database, Zap,
@@ -15,6 +17,7 @@ import {
   Sparkles, Globe, ZapIcon, LucideIcon
 } from "lucide-react";
 import { useLang } from "@/lib/i18n";
+import { useModalBehavior } from "@/lib/useModalBehavior";
 
 // Meta netral-bahasa (warna/ikon/tech). Teks diambil dari dictionary via useLang.
 const SERVICE_META: { id: string; color: string; icon: LucideIcon; tech: string[] }[] = [
@@ -43,81 +46,131 @@ const EASE_CUSTOM = [0.16, 1, 0.3, 1] as const;
 // --- Sub-Component: Detail Modal ---
 const ServiceModal = ({ service, isOpen, onClose }: { service: Service; isOpen: boolean; onClose: () => void }) => {
   const { t } = useLang();
-  return (
+  const reduce = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  useModalBehavior(isOpen, onClose);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <>
+        <motion.div
+          key="service-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={service.title}
+          onClick={onClose}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 cursor-zoom-out"
+        >
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] cursor-zoom-out"
+            className="absolute inset-0 bg-black/80 backdrop-blur-md"
           />
+
+          {/* Panel — capped height, only the body scrolls */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[700px] md:h-auto max-h-[90vh] bg-[var(--bg-card)] border border-white/10 rounded-[3rem] z-[101] overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 24 }}
+            animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 24 }}
+            transition={{ type: "spring", damping: 26, stiffness: 280 }}
+            className="relative w-full max-w-2xl max-h-[85dvh] flex flex-col bg-[var(--bg-card)] border border-white/10 rounded-[1.75rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl cursor-default"
           >
-            <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: service.color }} />
-            
-            <div className="p-8 md:p-12 overflow-y-auto max-h-full">
-              <button 
-                onClick={onClose}
-                className="absolute top-6 right-6 p-3 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"
+            {/* Accent glow + top bar */}
+            <div className="absolute top-0 left-0 w-full h-1 z-20" style={{ backgroundColor: service.color }} />
+            <div
+              className="pointer-events-none absolute -top-24 -right-16 w-64 h-64 rounded-full blur-[120px] opacity-40"
+              style={{ backgroundColor: service.color }}
+            />
+
+            {/* Header */}
+            <div className="relative z-10 shrink-0 flex items-start gap-4 p-5 sm:p-8 pb-4 sm:pb-6 border-b border-white/5">
+              <div
+                className="shrink-0 p-3 sm:p-4 rounded-2xl bg-white/5 border border-white/10"
+                style={{ boxShadow: `0 0 30px -12px ${service.color}` }}
               >
-                <X size={20} />
-              </button>
-
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                  <service.icon size={32} style={{ color: service.color }} />
-                </div>
-                <div>
-                  <span className="text-secondary font-mono text-[10px] tracking-widest uppercase">{service.subtitle}</span>
-                  <h3 className="text-3xl font-bold text-white tracking-tighter">{service.title}</h3>
-                </div>
+                <service.icon size={26} style={{ color: service.color }} />
               </div>
+              <div className="min-w-0 pr-10">
+                <span className="block text-secondary font-mono text-[10px] tracking-[0.25em] uppercase truncate">
+                  {service.subtitle}
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tighter leading-tight">
+                  {service.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label={t.services.close}
+                className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2.5 rounded-full bg-white/5 hover:bg-white/15 text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60"
+              >
+                <X size={18} />
+              </button>
+            </div>
 
-              <p className="text-zinc-400 text-lg leading-relaxed mb-10 font-light">
+            {/* Body (only this scrolls) */}
+            <div className="relative z-10 flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 sm:px-8 py-6 space-y-8">
+              <p className="text-zinc-400 text-base sm:text-lg leading-relaxed font-light">
                 {service.longDescription}
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                 <div className="space-y-4">
                   <h4 className="text-white font-bold flex items-center gap-2 italic">
                     <Sparkles size={16} className="text-secondary" /> {t.services.capabilities}
                   </h4>
-                  {service.features.map(f => (
-                    <div key={f} className="flex items-center gap-3 text-zinc-500 text-sm">
-                      <CheckCircle2 size={14} style={{ color: service.color }} /> {f}
-                    </div>
-                  ))}
+                  <div className="space-y-3">
+                    {service.features.map(f => (
+                      <div key={f} className="flex items-start gap-3 text-zinc-400 text-sm">
+                        <CheckCircle2 size={15} className="mt-0.5 shrink-0" style={{ color: service.color }} />
+                        <span>{f}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <div className="space-y-4">
                   <h4 className="text-white font-bold flex items-center gap-2 italic">
                     <ZapIcon size={16} className="text-secondary" /> {t.services.impact}
                   </h4>
-                  <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5">
+                  <div className="p-5 sm:p-6 rounded-3xl bg-white/[0.02] border border-white/5">
                     <span className="text-4xl font-black text-white tracking-tighter">{service.stats}</span>
-                    <p className="text-xs text-zinc-600 mt-2 uppercase tracking-widest">{t.services.perfIncrease}</p>
+                    <p className="text-xs text-zinc-500 mt-2 uppercase tracking-widest">{t.services.perfIncrease}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {service.tech.map(tag => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1 rounded-lg bg-white/5 border border-white/5 text-[9px] font-mono text-zinc-400 uppercase tracking-widest"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
+            </div>
 
-              <button 
+            {/* Footer */}
+            <div className="relative z-10 shrink-0 p-4 sm:p-6 pt-3 border-t border-white/5 bg-[var(--bg-card)]">
+              <button
+                type="button"
                 onClick={onClose}
-                className="w-full py-5 bg-white text-black font-black text-xs uppercase tracking-[0.3em] rounded-2xl hover:bg-secondary transition-colors"
+                className="w-full py-4 sm:py-5 bg-white text-black font-black text-xs uppercase tracking-[0.3em] rounded-2xl hover:bg-secondary transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60"
               >
                 {t.services.close}
               </button>
             </div>
           </motion.div>
-        </>
+        </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 

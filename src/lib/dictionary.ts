@@ -175,6 +175,7 @@ const id = {
     summary: "Executive_Summary",
     achievements: "Key_Achievements",
     readLog: "Baca Log Lengkap",
+    close: "Tutup Log",
     role: "Lead_System_Architect",
     items: {
       "01": {
@@ -404,6 +405,7 @@ const en: typeof id = {
     summary: "Executive_Summary",
     achievements: "Key_Achievements",
     readLog: "Read Full Log",
+    close: "Close Log",
     role: "Lead_System_Architect",
     items: {
       "01": {

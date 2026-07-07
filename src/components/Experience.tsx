@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { 
   motion, 
   useScroll, 
   useSpring, 
-  useTransform, 
+  useTransform,
+  useReducedMotion,
   AnimatePresence
 } from "framer-motion";
 import {
@@ -14,6 +16,7 @@ import {
   Terminal, ExternalLink, Activity
 } from "lucide-react";
 import { useLang } from "@/lib/i18n";
+import { useModalBehavior } from "@/lib/useModalBehavior";
 
 // --- Types & Data ---
 interface Experience {
@@ -81,68 +84,120 @@ const EXP_META: ExpMeta[] = [
 // --- Sub-Component: Experience Modal ---
 const ExperienceModal = ({ item, isOpen, onClose }: { item: Experience; isOpen: boolean; onClose: () => void }) => {
   const { t } = useLang();
-  return (
+  const reduce = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  useModalBehavior(isOpen, onClose);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <>
+        <motion.div
+          key="experience-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={item.role}
+          onClick={onClose}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 cursor-zoom-out"
+        >
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] cursor-zoom-out"
+            className="absolute inset-0 bg-black/90 backdrop-blur-sm"
           />
+
+          {/* Panel — capped height, only the body scrolls */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[600px] bg-[var(--bg-card)] border border-white/10 rounded-[2.5rem] z-[101] overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 24 }}
+            animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 24 }}
+            transition={{ type: "spring", damping: 26, stiffness: 280 }}
+            className="relative w-full max-w-xl max-h-[85dvh] flex flex-col bg-[var(--bg-card)] border border-white/10 rounded-[1.75rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl cursor-default"
           >
-            <div className="p-8 md:p-12 relative overflow-y-auto max-h-[85vh]">
-              <button onClick={onClose} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
-                <X size={24} />
+            {/* Cyan scanline accent */}
+            <div className="absolute top-0 left-0 w-full h-1 z-20 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+            <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-64 rounded-full bg-cyan-500/20 blur-[120px]" />
+
+            {/* Header */}
+            <div className="relative z-10 shrink-0 p-5 sm:p-8 pb-4 sm:pb-5 border-b border-white/5">
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label={t.experience.close}
+                className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full bg-white/5 text-zinc-400 hover:bg-white/15 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+              >
+                <X size={20} />
               </button>
 
-              <div className="flex items-center gap-3 mb-6 text-cyan-500 font-mono text-[10px] tracking-widest uppercase">
-                <Terminal size={14} />
-                <span>LOG_FILE: {item.id}</span>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-cyan-500 font-mono text-[10px] tracking-widest uppercase">
+                <span className="inline-flex items-center gap-2"><Terminal size={14} /> LOG_FILE: {item.id}</span>
+                {item.status && (
+                  <span className="text-cyan-400 font-bold animate-pulse tracking-tighter">[{item.status}]</span>
+                )}
               </div>
 
-              <h3 className="text-3xl font-bold text-white mb-2 tracking-tighter">{item.role}</h3>
-              <p className="text-zinc-500 mb-8">{item.org} • {item.period}</p>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 tracking-tighter pr-10">{item.role}</h3>
+              <p className="text-zinc-500 text-sm sm:text-base flex flex-wrap items-center gap-x-2">
+                {item.type === "work" ? <Briefcase size={15} /> : <GraduationCap size={15} />}
+                <span>{item.org}</span>
+                <span className="text-zinc-700">•</span>
+                <span className="font-mono text-xs">{item.period}</span>
+              </p>
+            </div>
 
-              <div className="space-y-8">
-                <div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Activity size={14} className="text-cyan-500" /> {t.experience.summary}
-                  </h4>
-                  <p className="text-zinc-400 leading-relaxed font-light">{item.fullLog}</p>
-                </div>
+            {/* Body (only this scrolls) */}
+            <div className="relative z-10 flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 sm:px-8 py-6 space-y-8">
+              <div>
+                <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <Activity size={14} className="text-cyan-500" /> {t.experience.summary}
+                </h4>
+                <p className="text-zinc-400 leading-relaxed font-light">{item.fullLog}</p>
+              </div>
 
-                <div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4 italic">{t.experience.achievements}</h4>
-                  <div className="grid grid-cols-1 gap-3">
-                    {item.achievements.map((acc, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 text-xs text-zinc-300">
-                        <CheckCircle2 size={14} className="text-cyan-500" />
-                        {acc}
-                      </div>
-                    ))}
-                  </div>
+              <div>
+                <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4 italic">{t.experience.achievements}</h4>
+                <div className="grid grid-cols-1 gap-3">
+                  {item.achievements.map((acc, i) => (
+                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 text-xs sm:text-sm text-zinc-300">
+                      <CheckCircle2 size={14} className="shrink-0 text-cyan-500" />
+                      {acc}
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <button 
+              <div className="flex flex-wrap gap-2">
+                {item.tags.map(tag => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-lg bg-white/5 border border-white/5 text-[9px] font-mono text-zinc-400 uppercase tracking-widest"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="relative z-10 shrink-0 p-4 sm:p-6 pt-3 border-t border-white/5 bg-[var(--bg-card)]">
+              <button
+                type="button"
                 onClick={onClose}
-                className="w-full mt-10 py-4 bg-cyan-500 text-black font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-cyan-400 transition-colors"
+                className="w-full py-4 bg-cyan-500 text-black font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-cyan-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
               >
-                Close_Terminal
+                {t.experience.close}
               </button>
             </div>
           </motion.div>
-        </>
+        </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 
