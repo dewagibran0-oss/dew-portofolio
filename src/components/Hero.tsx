@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, useSpring, useReducedMotion, type MotionValue } from "framer-motion";
-import { useRef, memo } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import Link from "next/link";
 import HeroScene from "./HeroScene";
 import { useLang } from "@/lib/i18n";
@@ -31,15 +31,26 @@ export default function Hero() {
   const shouldReduceMotion = useReducedMotion();
   const { t } = useLang();
 
+  // Efek parallax/opacity terikat-scroll HANYA di desktop bertenaga.
+  // Di mobile (khususnya iOS: 100svh + toolbar dinamis membuat pengukuran
+  // scroll tak stabil → opacity bisa melompat ke 0 → seluruh Hero "hilang"),
+  // konten dibuat statis & selalu terlihat. Default `false` (statis) agar
+  // SSR/first-paint aman di iOS; diaktifkan hanya setelah mount di desktop.
+  const [parallax, setParallax] = useState(false);
+  useEffect(() => {
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    setParallax(finePointer && !shouldReduceMotion);
+  }, [shouldReduceMotion]);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
   });
 
-  const smoothProgress = useSpring(scrollYProgress, { 
-    stiffness: 30, 
-    damping: 20, 
-    restDelta: 0.001 
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 30,
+    damping: 20,
+    restDelta: 0.001
   });
 
   // Multilayered Parallax & Transform
@@ -60,12 +71,11 @@ export default function Hero() {
       <BackgroundLayer />
 
       <motion.div
-        style={{
-          y: shouldReduceMotion ? 0 : yContent,
-          scale,
-          opacity,
-          willChange: "transform, opacity"
-        }}
+        style={
+          parallax
+            ? { y: yContent, scale, opacity, willChange: "transform, opacity" }
+            : { opacity: 1 }
+        }
         className="relative z-10 w-full flex flex-col items-center justify-center px-6 py-20"
       >
             {/* 1. Floating Badge Status */}
