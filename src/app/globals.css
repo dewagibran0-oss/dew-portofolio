@@ -204,4 +204,15 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb {
   [class*="mix-blend"] {
     mix-blend-mode: normal !important;
   }
+  /*
+   * Blob glow dekoratif memakai blur arbitrase besar (blur-[90px]..[160px]).
+   * WebKit iOS me-rasterisasi filter blur radius besar dengan sangat mahal,
+   * dan mengulanginya saat section masuk viewport → jank scroll global.
+   * Batasi ke 24px: nuansa glow tetap ada, biaya paint anjlok drastis.
+   * Selektor `blur-[` hanya cocok utility blur arbitrase (blob), BUKAN
+   * `backdrop-blur-*` (nama tetap) sehingga konten kartu tak ikut ter-blur.
+   */
+  [class*="blur-["] {
+    filter: blur(24px) !important;
+  }
 }

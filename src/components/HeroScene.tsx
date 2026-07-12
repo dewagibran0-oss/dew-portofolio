@@ -13,11 +13,21 @@ const HeroCanvas = dynamic(() => import("./HeroCanvas"), { ssr: false });
  * NOL beban GPU/main-thread → aman untuk skor Performance mobile.
  */
 function StaticAurora() {
+  // Glow dibuat dari radial-gradient (BUKAN filter blur). Layer ini `fixed`
+  // dan selalu terlihat di belakang semua section; memakai `blur()` di sini
+  // membuat WebKit iOS me-rasterisasi ulang tiap frame scroll → lag global.
+  // Radial-gradient memberi nuansa aurora yang sama dengan nol biaya filter.
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-[var(--bg)]">
-      <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[80%] h-[55%] bg-cyan-500/20 blur-[90px] rounded-full opacity-60" />
-      <div className="absolute bottom-[5%] right-[5%] w-[45%] h-[45%] bg-indigo-500/15 blur-[90px] rounded-full opacity-50" />
-      <div className="absolute top-[20%] left-[5%] w-[35%] h-[35%] bg-blue-600/10 blur-[90px] rounded-full opacity-40" />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(60% 45% at 50% 12%, rgba(34,211,238,0.20), transparent 60%)," +
+            "radial-gradient(48% 42% at 88% 90%, rgba(99,102,241,0.14), transparent 60%)," +
+            "radial-gradient(42% 38% at 8% 30%, rgba(37,99,235,0.12), transparent 60%)",
+        }}
+      />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,var(--bg)_100%)]" />
     </div>
   );

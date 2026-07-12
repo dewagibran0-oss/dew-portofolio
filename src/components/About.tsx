@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { 
   motion, 
   useScroll, 
@@ -36,6 +36,14 @@ const Photo3D = ({ isInView }: { isInView: boolean }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
+  // Animasi idle tak-terbatas (float + pulse) hanya di desktop bertenaga.
+  // Di mobile (khususnya iOS) me-repaint foto ber-drop-shadow besar tiap frame
+  // → jank. Bayangan tetap tampil, hanya diam.
+  const [idleMotion, setIdleMotion] = useState(false);
+  useEffect(() => {
+    setIdleMotion(window.matchMedia("(hover: hover) and (pointer: fine)").matches);
+  }, []);
+
   // Tilt 3D halus mengikuti kursor.
   const springConfig = { stiffness: 90, damping: 25 };
   const rotateX = useSpring(useTransform(mouseY, [-300, 300], [8, -8]), springConfig);
@@ -66,9 +74,9 @@ const Photo3D = ({ isInView }: { isInView: boolean }) => {
         {/* Aura glow di belakang subjek (tanpa border/kartu) */}
         <motion.div
           aria-hidden
-          animate={{ scale: [1, 1.08, 1], opacity: [0.55, 0.8, 0.55] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-gradient-to-br from-secondary/40 via-cyan-500/20 to-purple-500/30 blur-[90px]"
+          animate={idleMotion ? { scale: [1, 1.08, 1], opacity: [0.55, 0.8, 0.55] } : undefined}
+          transition={idleMotion ? { duration: 6, repeat: Infinity, ease: "easeInOut" } : undefined}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-gradient-to-br from-secondary/40 via-cyan-500/20 to-purple-500/30 blur-[90px] opacity-60"
         />
         {/* Cincin dekoratif tipis */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -81,8 +89,8 @@ const Photo3D = ({ isInView }: { isInView: boolean }) => {
           className="absolute inset-0"
         >
           <motion.div
-            animate={{ y: [0, -14, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            animate={idleMotion ? { y: [0, -14, 0] } : undefined}
+            transition={idleMotion ? { duration: 5, repeat: Infinity, ease: "easeInOut" } : undefined}
             className="relative w-full h-full"
           >
             <Image
