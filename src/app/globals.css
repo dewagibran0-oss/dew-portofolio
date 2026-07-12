@@ -180,3 +180,28 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb {
  *  jank scroll. Class .cv-auto dibiarkan sebagai no-op yang aman.
  * ============================================================
  */
+
+/*
+ * ============================================================
+ *  PERF iOS (WebKit): Safari & Chrome di iPhone sama-sama WebKit dan
+ *  merender `backdrop-filter` + `mix-blend-mode` sangat lambat saat scroll
+ *  (tiap kartu blur mengambil ulang sampel aurora fixed di belakangnya →
+ *  blur-di-atas-blur; mix-blend memaksa re-composite seluruh stack).
+ *  Efek ini dimatikan HANYA di iOS. Android & desktop tetap penuh.
+ *  `@supports (-webkit-touch-callout: none)` hanya cocok di WebKit iOS,
+ *  bukan Safari macOS — jadi desktop tak terpengaruh.
+ *
+ *  Panel tetap terbaca: semua sudah punya background semi-transparan +
+ *  border, jadi bentuknya utuh, hanya kehilangan blur (tak kasat mata
+ *  di layar kecil) demi scroll yang benar-benar mulus.
+ * ============================================================
+ */
+@supports (-webkit-touch-callout: none) {
+  [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  [class*="mix-blend"] {
+    mix-blend-mode: normal !important;
+  }
+}
