@@ -138,7 +138,10 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="font-sans antialiased selection:bg-cyan-500/30 overflow-x-hidden bg-base">
+      <body
+        className="font-sans antialiased selection:bg-cyan-500/30 overflow-x-hidden bg-base"
+        suppressHydrationWarning
+      >
         <Providers initialLang={lang}>
           <main id="main-content" className="relative min-h-screen">
             {children}

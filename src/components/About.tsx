@@ -86,7 +86,7 @@ const Photo3D = ({ isInView }: { isInView: boolean }) => {
             className="relative w-full h-full"
           >
             <Image
-              src="/profile-cut.png"
+              src="/propil.png"
               alt="Dewa Gibran — Digital Architect"
               fill
               sizes="(max-width: 1024px) 80vw, 40vw"

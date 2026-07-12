@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { ThemeProvider } from "@/lib/theme";
 import { LanguageProvider } from "@/lib/i18n";
@@ -16,10 +16,23 @@ export default function Providers({
   children: React.ReactNode;
   initialLang: Lang;
 }) {
+  // Hanya perangkat ber-mouse (desktop) yang me-mount Cursor. Di mobile/sentuh
+  // chunk framer-motion + listener + loop spring TIDAK pernah diunduh/dijalankan
+  // → nol beban main-thread (TBT) untuk efek yang memang tak terpakai di sana.
+  const [pointerFine, setPointerFine] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const update = () => setPointerFine(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   return (
     <ThemeProvider>
       <LanguageProvider initialLang={initialLang}>
-        <Cursor />
+        {pointerFine && <Cursor />}
         {children}
       </LanguageProvider>
     </ThemeProvider>
