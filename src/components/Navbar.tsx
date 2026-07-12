@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   motion,
   AnimatePresence,
@@ -42,6 +42,17 @@ export default function Navbar() {
   });
 
   const isDark = theme === "dark";
+
+  // Kunci scroll body saat menu terbuka → tak ada scroll latar yang janky
+  // + memberi rasa "fokus" yang lebih premium. Dibersihkan saat menu tutup.
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isOpen]);
 
   return (
     <motion.nav
@@ -147,75 +158,95 @@ export default function Navbar() {
           </div>
         </button>
 
-        {/* MOBILE MENU OVERLAY */}
+        {/* MOBILE MENU OVERLAY
+            Reveal via transform+opacity murni (di-composite GPU, nol repaint)
+            dengan transform-origin kanan-atas → tetap terasa "mekar" dari tombol
+            menu seperti sebelumnya, tapi mulus di HP kelas apa pun. */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ clipPath: "circle(0% at 90% 5%)" }}
-              animate={{ clipPath: "circle(150% at 90% 5%)" }}
-              exit={{ clipPath: "circle(0% at 90% 5%)" }}
-              transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-              className="fixed inset-0 bg-[var(--bg)] flex flex-col items-center justify-center z-[101]"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.92 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              style={{ transformOrigin: "90% 5%", willChange: "transform, opacity" }}
+              className="fixed inset-0 bg-[var(--bg)] flex flex-col items-center z-[101] transform-gpu pt-24 pb-10"
             >
-              <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/10 blur-[120px] rounded-full" />
+              {/* Aurora glow — radial-gradient statis (tanpa filter blur → nol beban GPU) */}
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_45%_at_88%_8%,rgba(34,211,238,0.14),transparent_60%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_40%_at_12%_92%,rgba(99,102,241,0.10),transparent_60%)]" />
 
-              {/* Mobile controls */}
-              <div className="absolute top-8 left-6 flex items-center gap-3 z-[102]">
-                <button
-                  onClick={toggleTheme}
-                  aria-label={isDark ? t.nav.themeToLight : t.nav.themeToDark}
-                  className="w-11 h-11 flex items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/80"
-                >
-                  {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                </button>
-                <button
-                  onClick={toggleLang}
-                  aria-label={t.nav.switchLang}
-                  className="h-11 px-4 flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] text-white/80"
-                >
-                  <Languages size={18} />
-                  <span className="text-xs font-mono font-bold tracking-widest uppercase">
-                    {lang}
-                  </span>
-                </button>
-              </div>
-
-              <div className="flex flex-col items-center gap-6">
-                {navLinks.map((link, i) => (
-                  <div key={link.href} className="overflow-hidden">
-                    <motion.a
-                      href={link.href}
-                      initial={{ y: 80 }}
-                      animate={{ y: 0 }}
-                      transition={{
-                        delay: 0.2 + i * 0.1,
-                        duration: 0.8,
-                        ease: [0.33, 1, 0.68, 1],
-                      }}
-                      onClick={() => setIsOpen(false)}
-                      className="text-5xl font-space font-bold text-white hover:text-secondary transition-colors block"
-                    >
-                      {link.name}
-                    </motion.a>
-                  </div>
-                ))}
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="absolute bottom-12 flex flex-col items-center gap-4"
+              {/* Links — stagger slide-up (transform+opacity, ringan) */}
+              <motion.nav
+                initial="hidden"
+                animate="show"
+                variants={{
+                  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+                }}
+                className="flex-1 flex flex-col items-center justify-center gap-5"
               >
-                <p className="text-gray-500 font-mono text-[10px] tracking-widest uppercase">
-                  {t.nav.getInTouch}
-                </p>
-                <a
-                  href="mailto:dewagibran0@gmail.com"
-                  className="text-white border-b border-secondary"
-                >
-                  dewagibran0@gmail.com
-                </a>
+                {navLinks.map((link, i) => (
+                  <motion.a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    variants={{
+                      hidden: { opacity: 0, y: 26 },
+                      show: { opacity: 1, y: 0 },
+                    }}
+                    transition={{ duration: 0.45, ease: [0.33, 1, 0.68, 1] }}
+                    className="group flex items-baseline gap-3 text-5xl font-space font-bold text-white transition-colors"
+                  >
+                    <span className="font-mono text-sm font-medium text-secondary/50 tracking-widest">
+                      0{i + 1}
+                    </span>
+                    <span className="transition-colors duration-300 group-hover:text-secondary">
+                      {link.name}
+                    </span>
+                  </motion.a>
+                ))}
+              </motion.nav>
+
+              {/* Footer cluster: kontrol theme/bahasa + kontak (rapi, tak menabrak logo) */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
+                className="shrink-0 flex flex-col items-center gap-6"
+              >
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={toggleTheme}
+                    aria-label={isDark ? t.nav.themeToLight : t.nav.themeToDark}
+                    className="w-11 h-11 flex items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/80 hover:text-secondary hover:border-secondary/40 transition-colors"
+                  >
+                    {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                  </button>
+                  <button
+                    onClick={toggleLang}
+                    aria-label={t.nav.switchLang}
+                    className="h-11 px-4 flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] text-white/80 hover:text-secondary hover:border-secondary/40 transition-colors"
+                  >
+                    <Languages size={18} />
+                    <span className="text-xs font-mono font-bold tracking-widest uppercase">
+                      {lang}
+                    </span>
+                  </button>
+                </div>
+
+                <div className="h-px w-24 bg-white/10" />
+
+                <div className="flex flex-col items-center gap-2">
+                  <p className="text-gray-500 font-mono text-[10px] tracking-widest uppercase">
+                    {t.nav.getInTouch}
+                  </p>
+                  <a
+                    href="mailto:dewagibran0@gmail.com"
+                    className="text-white border-b border-secondary/60 hover:border-secondary transition-colors"
+                  >
+                    dewagibran0@gmail.com
+                  </a>
+                </div>
               </motion.div>
             </motion.div>
           )}
