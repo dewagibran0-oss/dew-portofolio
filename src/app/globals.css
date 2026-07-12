@@ -170,14 +170,13 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb {
 
 /*
  * ============================================================
- *  PERF: content-visibility untuk section di bawah lipatan.
- *  Browser melewati layout + paint konten off-screen saat load
- *  → menurunkan render-work & mempercepat LCP di perangkat lemah.
- *  contain-intrinsic-size menjaga tinggi perkiraan agar scrollbar
- *  & anchor tidak melompat (tidak menimbulkan CLS).
+ *  CATATAN: content-visibility:auto DIHAPUS.
+ *  Sebelumnya section berat baru dirender saat mendekati viewport
+ *  → di mobile menimbulkan lag + "konten kosong" pop-in telat, dan
+ *  anchor dari menu navbar meleset karena tinggi perkiraan (800px)
+ *  jauh dari tinggi asli. Section sudah dilazy-load via next/dynamic
+ *  + animasi whileInView, jadi menghapus ini tidak menurunkan skor
+ *  (LCP/FCP semuanya di Hero above-the-fold) sekaligus menghilangkan
+ *  jank scroll. Class .cv-auto dibiarkan sebagai no-op yang aman.
  * ============================================================
  */
-.cv-auto {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 800px;
-}
