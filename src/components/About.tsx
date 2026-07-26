@@ -71,16 +71,20 @@ const Photo3D = ({ isInView }: { isInView: boolean }) => {
       className="relative lg:col-span-5 z-20 [transform-style:preserve-3d]"
     >
       <div className="relative aspect-[4/5] group">
-        {/* Aura glow di belakang subjek (tanpa border/kartu) */}
+        {/* Aura lembut maroon di belakang subjek (tanpa border/kartu) */}
         <motion.div
           aria-hidden
-          animate={idleMotion ? { scale: [1, 1.08, 1], opacity: [0.55, 0.8, 0.55] } : undefined}
+          animate={idleMotion ? { scale: [1, 1.08, 1], opacity: [0.4, 0.6, 0.4] } : undefined}
           transition={idleMotion ? { duration: 6, repeat: Infinity, ease: "easeInOut" } : undefined}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-gradient-to-br from-secondary/40 via-cyan-500/20 to-purple-500/30 blur-[90px] opacity-60"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full opacity-50"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(140,47,57,0.22) 0%, transparent 70%)",
+          }}
         />
         {/* Cincin dekoratif tipis */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[70%] h-[70%] rounded-full border border-white/[0.06]" />
+          <div className="w-[70%] h-[70%] rounded-full border border-[var(--hairline)]" />
         </div>
 
         {/* FOTO: transparan, tanpa border, melayang + parallax + float idle */}
@@ -104,18 +108,15 @@ const Photo3D = ({ isInView }: { isInView: boolean }) => {
           </motion.div>
         </motion.div>
 
-        {/* Bayangan pijakan (ground glow) biar tidak 'mengambang' aneh */}
-        <div className="absolute bottom-[6%] left-1/2 -translate-x-1/2 w-[55%] h-6 bg-black/60 blur-2xl rounded-[50%]" />
+        {/* Bayangan pijakan (ground shadow) biar tidak 'mengambang' aneh */}
+        <div className="absolute bottom-[6%] left-1/2 -translate-x-1/2 w-[55%] h-6 bg-black/25 blur-2xl rounded-[50%]" />
 
-        {/* Chip nama minimalis (glass, tanpa kotak besar) */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 px-5 py-2.5 rounded-full backdrop-blur-md bg-white/[0.04] border border-white/10">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75 animate-ping" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary" />
-          </span>
+        {/* Chip nama minimalis */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 px-5 py-2.5 rounded-full bg-[var(--bg-card)] border border-[var(--hairline)] shadow-sm">
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--maroon)]" />
           <p className="text-white font-bold text-sm tracking-tight">Dewa Gibran</p>
-          <span className="w-px h-4 bg-white/15" />
-          <p className="text-zinc-400 font-mono text-[10px] uppercase tracking-widest">{t.about.base}</p>
+          <span className="w-px h-4 bg-[var(--hairline)]" />
+          <p className="text-zinc-400 text-[10px] font-medium uppercase tracking-widest">{t.about.base}</p>
         </div>
       </div>
     </motion.div>
@@ -128,16 +129,16 @@ const StatCard = ({ label, value, suffix, icon, delay }: StatCardProps) => (
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ delay, duration: 0.8 }}
-    className="relative p-8 rounded-[2rem] bg-gradient-to-b from-white/[0.03] to-transparent border border-white/5 group hover:border-secondary/30 transition-colors"
+    className="relative p-8 rounded-[2rem] bg-[var(--bg-card)] border border-[var(--hairline)] group hover:border-[var(--maroon)]/40 transition-colors shadow-sm"
   >
-    <div className="text-zinc-600 group-hover:text-secondary transition-colors mb-4">
+    <div className="text-zinc-600 group-hover:text-[var(--maroon)] transition-colors mb-4">
       {icon}
     </div>
     <div className="flex items-baseline gap-1">
       <span className="text-4xl font-black text-white tracking-tighter">{value}</span>
-      <span className="text-secondary font-bold text-xl">{suffix}</span>
+      <span className="text-[var(--maroon)] font-bold text-xl">{suffix}</span>
     </div>
-    <p className="text-zinc-500 font-mono text-[9px] uppercase tracking-[0.2em] mt-1">{label}</p>
+    <p className="text-zinc-500 text-[9px] font-medium uppercase tracking-[0.2em] mt-1">{label}</p>
   </motion.div>
 );
 
@@ -184,7 +185,7 @@ export default function About() {
         style={{ x: bgTextX }}
         className="absolute top-1/2 -translate-y-1/2 left-0 pointer-events-none select-none z-0"
       >
-        <h2 className="text-[30vw] font-black text-white/[0.02] leading-none uppercase tracking-tighter italic">
+        <h2 className="text-[30vw] font-black leading-none uppercase tracking-tighter italic" style={{ color: "color-mix(in srgb, var(--color-white) 3%, transparent)" }}>
           ARCHITECT
         </h2>
       </motion.div>
@@ -202,14 +203,14 @@ export default function About() {
               className="space-y-12"
             >
               <div className="space-y-6">
-                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
-                  <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                  <span className="text-secondary font-mono text-[10px] uppercase tracking-[0.3em] font-bold">{t.about.badge}</span>
+                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[var(--maroon)]/10 border border-[var(--maroon)]/25">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--maroon)]" />
+                  <span className="text-[var(--maroon)] text-[10px] uppercase tracking-[0.3em] font-semibold">{t.about.badge}</span>
                 </div>
 
                 <h2 className="text-6xl md:text-8xl font-black text-white leading-[0.9] tracking-tighter uppercase">
                   {t.about.titleTop} <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-white">
+                  <span className="text-[var(--maroon)] italic">
                     {t.about.titleBottom}
                   </span>
                 </h2>
@@ -236,35 +237,35 @@ export default function About() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className={`relative overflow-hidden group flex items-center gap-4 px-10 py-6 rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 ${
-                    isDownloaded ? 'bg-emerald-500 text-white' : 'bg-white text-black'
+                    isDownloaded ? 'bg-emerald-600 text-white' : 'bg-[var(--maroon)] text-white'
                   }`}
                 >
                   <span className="relative z-10 flex items-center gap-3">
                     {isDownloading ? t.about.downloading : isDownloaded ? t.about.downloaded : t.about.download}
                     {isDownloaded ? <CheckCircle2 size={18} /> : <FileText size={18} className="group-hover:rotate-12 transition-transform" />}
                   </span>
-                  
+
                   {/* Progress Bar Background */}
                   {isDownloading && (
-                    <motion.div 
+                    <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: "100%" }}
                       transition={{ duration: 2 }}
-                      className="absolute inset-0 bg-secondary/20"
+                      className="absolute inset-0 bg-white/15"
                     />
                   )}
-                  
+
                   {/* Hover Effect */}
-                  <div className="absolute inset-0 bg-secondary translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+                  <div className="absolute inset-0 bg-[var(--maroon-strong)] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
                 </motion.button>
 
                 <div className="flex items-center gap-5 group cursor-pointer">
-                  <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-secondary transition-colors">
-                    <Mail size={16} className="text-zinc-500 group-hover:text-secondary" />
+                  <div className="w-10 h-10 rounded-full border border-[var(--hairline)] flex items-center justify-center group-hover:border-[var(--maroon)] transition-colors">
+                    <Mail size={16} className="text-zinc-500 group-hover:text-[var(--maroon)]" />
                   </div>
                   <div>
-                    <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">{t.about.inquiry}</p>
-                    <p className="text-white font-bold group-hover:text-secondary transition-colors">dewagibran0@gmail.com</p>
+                    <p className="text-[9px] font-medium text-zinc-600 uppercase tracking-widest">{t.about.inquiry}</p>
+                    <p className="text-white font-bold group-hover:text-[var(--maroon)] transition-colors">dewagibran0@gmail.com</p>
                   </div>
                 </div>
               </div>
@@ -274,7 +275,7 @@ export default function About() {
       </div>
 
       {/* Finishing Texture Layer */}
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[var(--hairline)]" />
     </section>
   );
 }

@@ -42,9 +42,9 @@ const componentRegistry: RegistrySection[] = [
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="group relative px-12 py-5 bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-[2rem] font-black tracking-tighter overflow-hidden shadow-[0_20px_50px_rgba(37,99,235,0.3)]"
+            className="group relative px-12 py-5 bg-[#8c2f39] text-white rounded-[2rem] font-black tracking-tighter overflow-hidden shadow-[0_20px_50px_rgba(140,47,57,0.3)]"
           >
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20" />
             <span className="relative z-10 flex items-center gap-3 italic">INITIALIZE CORE <Rocket size={20} className="group-hover:rotate-45 transition-transform duration-500"/></span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
           </motion.button>
@@ -236,7 +236,7 @@ const componentRegistry: RegistrySection[] = [
                 key={i}
                 animate={{ height: [`${h}%`, "10%", `${h}%`] }}
                 transition={{ repeat: Infinity, duration: 1.2, delay: i * 0.05 }}
-                className="w-2 bg-gradient-to-t from-blue-600 to-indigo-400 rounded-full"
+                className="w-2 bg-[#c94f5d] rounded-full"
               />
             ))}
           </div>
@@ -297,13 +297,7 @@ export default function UIComponentsEngine() {
     <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-blue-500/30 overflow-x-hidden">
       
       {/* Progress Bar */}
-      <motion.div className="fixed top-0 left-0 right-0 h-[2px] bg-blue-600 z-[100] origin-left shadow-[0_0_15px_#2563eb]" style={{ scaleX }} />
-
-      {/* Ambient Background */}
-      <div className="fixed inset-0 pointer-events-none opacity-40">
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] bg-blue-600/20 blur-[150px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-indigo-600/20 blur-[150px] rounded-full" />
-      </div>
+      <motion.div className="fixed top-0 left-0 right-0 h-[2px] bg-[#8c2f39] z-[100] origin-left" style={{ scaleX }} />
 
       {/* Header Section */}
       <header className="h-20 border-b border-white/5 flex items-center px-6 lg:px-12 sticky top-0 bg-[#020617]/80 backdrop-blur-xl z-[60] justify-between">
@@ -313,32 +307,28 @@ export default function UIComponentsEngine() {
           </button>
           <div className="flex flex-col">
              <h1 className="text-white font-black tracking-tighter text-xl italic uppercase">
-               DEWA<span className="text-blue-500">.</span>LAB
+               DEWA<span className="text-[#c94f5d]">.</span>LAB
              </h1>
-             <span className="text-[10px] font-bold text-slate-500 tracking-[0.2em]">ENGINEERING DESIGN v6.0</span>
+             <span className="text-[10px] font-bold text-slate-500 tracking-[0.2em]">ENGINEERING DESIGN</span>
           </div>
         </div>
 
         <div className="hidden md:flex items-center gap-8">
     <div className="flex flex-col items-end">
-        <span className="text-[9px] font-black text-blue-500 tracking-widest uppercase">Available for projects</span>
+        <span className="text-[9px] font-black text-[#c94f5d] tracking-widest uppercase">Available for projects</span>
         <span className="text-xs font-bold text-green-500 flex items-center gap-1">
-            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /> READY_TO_HIRE
+            <div className="w-1.5 h-1.5 bg-green-500 rounded-full" /> Open to work
         </span>
     </div>
-    
-    <a 
-        href="https://wa.me/62881025020924" 
-        target="_blank" 
+
+    <a
+        href="https://wa.me/62881025020924"
+        target="_blank"
         rel="noopener noreferrer"
-        className="group relative flex items-center gap-2 px-6 py-2.5 bg-white text-black text-xs font-black rounded-xl hover:bg-blue-600 hover:text-white transition-all duration-300"
+        className="group relative flex items-center gap-2 px-6 py-2.5 bg-[#8c2f39] text-white text-xs font-black rounded-xl hover:bg-[#6d2430] transition-all duration-300"
     >
         <MessageSquare size={14} className="group-hover:rotate-12 transition-transform" />
         HIRE ME
-        <div className="absolute -top-1 -right-1 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
-        </div>
     </a>
 </div>
 

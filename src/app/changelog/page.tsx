@@ -84,9 +84,7 @@ const changelogData: ChangelogItem[] = [
 // --- Sub-Components ---
 const BackgroundEffect = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full animate-pulse" />
-    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 blur-[120px] rounded-full" />
-    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
+    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10" />
   </div>
 );
 
@@ -104,7 +102,7 @@ export default function ChangelogPage() {
   }, [searchQuery, activeTab]);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-blue-500/40 pb-20 font-sans">
+    <div className="min-h-screen bg-[#0c0a09] text-slate-200 pb-20 font-sans">
       <BackgroundEffect />
 
       {/* Progress Bar */}
@@ -213,10 +211,9 @@ export default function ChangelogPage() {
 
                   {/* Main Card */}
                   <div className="group relative">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500" />
-                    <div className="relative bg-slate-900/80 border border-slate-800 p-6 md:p-8 rounded-3xl backdrop-blur-xl">
+                    <div className="relative bg-slate-900/80 border border-slate-800 p-6 md:p-8 rounded-3xl">
                       <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                        <h3 className="text-2xl font-bold text-white group-hover:text-[#c94f5d] transition-colors">
                           {item.title}
                         </h3>
                         <ArrowUpRight size={20} className="text-slate-600 group-hover:text-white transition-all" />

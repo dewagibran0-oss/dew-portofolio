@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Fraunces } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 import Providers from "./providers";
@@ -18,6 +18,14 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
   adjustFontFallback: true,
+});
+
+// Serif editorial untuk judul (h1-h3) — kesan premium/elegan.
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+  axes: ["opsz"],
 });
 
 const SITE_URL = "https://dewagibran.vercel.app";
@@ -96,8 +104,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#020617" },
-    { media: "(prefers-color-scheme: light)", color: "#f6f8fc" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c0a09" },
+    { media: "(prefers-color-scheme: light)", color: "#faf7f2" },
   ],
 };
 
@@ -111,7 +119,7 @@ const themeInitScript = `
 (function(){
   try {
     var t = localStorage.getItem('theme');
-    if (t !== 'light' && t !== 'dark') t = 'dark';
+    if (t !== 'light' && t !== 'dark') t = 'light';
     document.documentElement.setAttribute('data-theme', t);
     document.documentElement.style.colorScheme = t;
   } catch (e) {}
@@ -131,15 +139,15 @@ export default async function RootLayout({
   return (
     <html
       lang={lang}
-      data-theme="dark"
-      className={`${spaceGrotesk.variable} ${inter.variable} scroll-smooth`}
+      data-theme="light"
+      className={`${spaceGrotesk.variable} ${inter.variable} ${fraunces.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body
-        className="font-sans antialiased selection:bg-cyan-500/30 overflow-x-hidden bg-base"
+        className="font-sans antialiased overflow-x-hidden bg-base"
         suppressHydrationWarning
       >
         <Providers initialLang={lang}>

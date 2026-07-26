@@ -91,69 +91,48 @@ export default function Cursor() {
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
-      {/* LAYER 1: Aura Glow (Ambient Depth) */}
+      {/* LAYER 1: The Outer Liquid Ring (Dynamic Stretching) */}
       <motion.div
-        className="fixed top-0 left-0 w-32 h-32 bg-secondary/5 blur-[80px] rounded-full"
-        style={{ 
-          x: ringX, 
-          y: ringY, 
-          translateX: "-50%", 
-          translateY: "-50%", 
-          scale: isHovered ? 2.5 : 1 
-        }}
-      />
-
-      {/* LAYER 2: The Outer Liquid Ring (Dynamic Stretching) */}
-      <motion.div
-        className="fixed top-0 left-0 border border-secondary/40 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,0.1)]"
+        className="fixed top-0 left-0 border rounded-full flex items-center justify-center"
         animate={{
           width: isHovered ? 80 : 40,
           height: isHovered ? 80 : 40,
-          backgroundColor: isHovered ? "rgba(34, 211, 238, 0.1)" : "rgba(34, 211, 238, 0)",
-          borderColor: isHovered ? "rgba(34, 211, 238, 1)" : "rgba(34, 211, 238, 0.4)",
+          backgroundColor: isHovered ? "rgba(140, 47, 57, 0.08)" : "rgba(140, 47, 57, 0)",
+          borderColor: isHovered ? "rgba(140, 47, 57, 0.9)" : "rgba(140, 47, 57, 0.4)",
         }}
         transition={{ type: "spring", stiffness: 250, damping: 25 }}
-        style={{ 
-          x: ringX, 
-          y: ringY, 
-          translateX: "-50%", 
+        style={{
+          x: ringX,
+          y: ringY,
+          translateX: "-50%",
           translateY: "-50%",
           scaleX,
           scaleY,
           rotate: angle
         }}
-      >
-        {isHovered && (
-          <motion.div 
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="w-full h-full rounded-full border border-secondary animate-ping opacity-20" 
-          />
-        )}
-      </motion.div>
+      />
 
-      {/* LAYER 3: The Sharp Core (Precision Dot) */}
+      {/* LAYER 2: The Sharp Core (Precision Dot) */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-secondary rounded-full shadow-[0_0_15px_rgba(34,211,238,0.8)]"
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-[var(--maroon)] rounded-full"
         animate={{
           scale: isClicking ? 0.5 : isHovered ? 1.5 : 1,
         }}
-        style={{ 
-          x: dotX, 
-          y: dotY, 
-          translateX: "-50%", 
+        style={{
+          x: dotX,
+          y: dotY,
+          translateX: "-50%",
           translateY: "-50%",
-          mixBlendMode: "difference"
         }}
       />
 
-      {/* LAYER 4: Tail Trail (Subtle follow) */}
+      {/* LAYER 3: Tail Trail (Subtle follow) */}
       <motion.div
-        className="fixed top-0 left-0 w-1 h-1 bg-secondary/20 rounded-full"
-        style={{ 
-          x: ringX, 
-          y: ringY, 
-          translateX: "-50%", 
+        className="fixed top-0 left-0 w-1 h-1 bg-[var(--maroon)]/20 rounded-full"
+        style={{
+          x: ringX,
+          y: ringY,
+          translateX: "-50%",
           translateY: "-50%",
         }}
       />

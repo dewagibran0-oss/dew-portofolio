@@ -1,8 +1,8 @@
 /**
  * Kamus dwibahasa (ID / EN).
  * ID = sumber kebenaran bentuk (shape); EN wajib mengikuti bentuk yang sama.
- * Label bergaya "kode" (SESSION_ID, Career_Matrix, LOG_FILE, dsb) sengaja
- * dibiarkan netral-bahasa karena merupakan bagian dari estetika desain.
+ * Semua label memakai bahasa natural yang elegan (label bergaya "kode"
+ * seperti Career_Matrix / COPY_UID sudah dihapus dari desain).
  */
 
 export type Lang = "id" | "en";
@@ -23,15 +23,15 @@ const id = {
     switchLang: "Switch to English",
   },
   hero: {
-    badge: "Systems Architect // 2026.V1",
+    badge: "Terbuka untuk proyek",
     description:
-      "Mendefinisikan ulang <b>Frontier Digital</b> melalui logika otonom dan rekayasa estetika kelas elite.",
-    launch: "Luncurkan Proyek",
-    link: "Jalin Koneksi",
-    hud: "Progress // Trace",
+      "Membangun <b>produk digital</b> yang rapi, cepat, dan enak dipakai — dengan ketelitian teknis dan rasa desain.",
+    launch: "Lihat Karya",
+    link: "Hubungi Saya",
+    hud: "Gulir",
     location: "Lokasi",
     status: "Status",
-    live: "Live",
+    live: "Tersedia",
   },
   skills: {
     titleTop: "Toolbox",
@@ -131,12 +131,13 @@ const id = {
     >,
   },
   projects: {
-    tag: "Project_Vault_2026",
-    titleTop: "SISTEM",
-    titleBottom: "TERANCANG.",
+    tag: "Karya Pilihan",
+    titleTop: "Sistem",
+    titleBottom: "Terancang.",
     intro:
       "Arsitektur digital dengan rekayasa performa tinggi dan estetika fungsional.",
     explore: "Jelajahi Arsip",
+    view: "Lihat Proyek",
     items: {
       "01": {
         title: "Diva Mobile Ecosystem",
@@ -166,17 +167,81 @@ const id = {
       { title: string; category: string; description: string }
     >,
   },
+  archive: {
+    back: "Kembali",
+    tag: "Arsip Proyek",
+    titleTop: "Semua",
+    titleBottom: "Karya.",
+    intro:
+      "Kumpulan proyek 2023—2026: sistem web, solusi fintech, dan aplikasi korporat.",
+    searchPlaceholder: "Cari judul atau teknologi...",
+    clearSearch: "Hapus pencarian",
+    all: "Semua",
+    noResults: "Tidak ada hasil",
+    noResultsHint: "Coba kata kunci atau kategori lain.",
+    projectsCount: "Proyek",
+    categoriesCount: "Kategori",
+    code: "Kode",
+    live: "Situs",
+    statuses: {
+      Active: "Aktif",
+      Beta: "Beta",
+      Archived: "Arsip",
+    } as Record<string, string>,
+    items: {
+      "01": {
+        description:
+          "Situs portofolio pribadi dengan animasi halus dan performa tinggi.",
+      },
+      "02": {
+        description:
+          "POS kantin digital dengan integrasi pembayaran Midtrans.",
+      },
+      "03": {
+        description:
+          "Platform retail smartphone dengan katalog dan manajemen inventaris.",
+      },
+      "04": {
+        description:
+          "Aplikasi pengelolaan keuangan personal dengan pelacakan arus kas.",
+      },
+      "05": {
+        description:
+          "Simulasi sistem perbankan mikro untuk transaksi simpan pinjam.",
+      },
+      "06": {
+        description:
+          "Situs perusahaan untuk logistik industri pertambangan.",
+      },
+      "07": {
+        description:
+          "Portal perdagangan internasional multi-negara.",
+      },
+      "08": {
+        description:
+          "Situs perusahaan pelayaran untuk manajemen armada dan kargo.",
+      },
+      "09": {
+        description:
+          "Aplikasi e-commerce lengkap dengan payment gateway terintegrasi.",
+      },
+      "10": {
+        description:
+          "Aplikasi mobile company profile untuk perusahaan pelayaran.",
+      },
+    } as Record<string, { description: string }>,
+  },
   experience: {
-    tag: "Career_Matrix_v4.0",
+    tag: "Pengalaman",
     titleTop: "Riwayat",
     titleBottom: "Terekam.",
     intro:
       "Rekam jejak profesional dalam pengembangan sistem dan arsitektur infrastruktur digital tingkat lanjut.",
-    summary: "Executive_Summary",
-    achievements: "Key_Achievements",
-    readLog: "Baca Log Lengkap",
-    close: "Tutup Log",
-    role: "Lead_System_Architect",
+    summary: "Ringkasan",
+    achievements: "Pencapaian Utama",
+    readLog: "Baca Selengkapnya",
+    close: "Tutup",
+    role: "Peran",
     items: {
       "01": {
         role: "Procurement & System Support",
@@ -211,42 +276,42 @@ const id = {
     } as Record<string, { role: string; desc: string; fullLog: string }>,
   },
   contact: {
-    badge: "Ready_to_Collaborate",
+    badge: "Siap berkolaborasi",
     titleTop: "Tingkatkan",
     titleBottom: "Inti Digital Anda.",
     paragraph:
       "Menyatukan arsitektur teknis yang kuat dengan desain yang intuitif. Mari diskusikan visi Anda menjadi kenyataan digital.",
-    initInquiry: "Initialize_Inquiry",
+    initInquiry: "Hubungi Saya",
     terminalDesc:
-      "Sistem siap menerima instruksi. Tekan tombol salin atau klik tombol kirim untuk membuka protokol komunikasi langsung.",
-    masterAddress: "Master_Address",
-    copy: "COPY_UID",
-    copied: "DONE",
-    openMail: "Open_In_Mail_App",
-    localTime: "Current_Local_Time",
-    baseLocation: "Base_Location",
-    uptime: "Uptime_Status",
-    latency: "Global_Latency",
+      "Salin alamat email atau klik tombol kirim untuk memulai percakapan langsung.",
+    masterAddress: "Alamat email",
+    copy: "Salin email",
+    copied: "Tersalin",
+    openMail: "Buka di aplikasi email",
+    localTime: "Waktu lokal",
+    baseLocation: "Lokasi",
+    uptime: "Ketersediaan",
+    latency: "Respons",
   },
   footer: {
     bio: "Membangun infrastruktur digital masa depan dengan presisi tingkat tinggi dan performa yang tidak kenal kompromi.",
-    initContact: "Initialize_Contact",
-    ready: "Siap Untuk Deployment?",
+    initContact: "Hubungi Saya",
+    ready: "Siap Memulai Proyek?",
     readyDesc:
-      "Buka protokol komunikasi dan mari kita bangun sesuatu yang revolusioner bersama.",
-    startProtocol: "Start_Protocol",
-    privacy: "Privacy_Protocol",
-    backToTop: "Back_to_Root",
-    navRoot: "Navigation_Root",
-    archiveGroup: "Artifact_Archive",
-    coreInterface: "Core_Interface",
-    laboratory: "Laboratory",
-    systemLog: "System_Log",
-    knowledgeBase: "Knowledge_Base",
-    projects2026: "Projects_2026",
-    legacyVault: "Legacy_Vault",
-    sourceIndex: "Source_Index",
-    uiComponents: "UI_Components",
+      "Mari berbincang dan bangun sesuatu yang berkesan bersama.",
+    startProtocol: "Mulai Percakapan",
+    privacy: "Kebijakan Privasi",
+    backToTop: "Kembali ke Atas",
+    navRoot: "Navigasi",
+    archiveGroup: "Arsip",
+    coreInterface: "Halaman Utama",
+    laboratory: "Laboratorium",
+    systemLog: "Catatan Rilis",
+    knowledgeBase: "Dokumentasi",
+    projects2026: "Proyek 2026",
+    legacyVault: "Arsip Lama",
+    sourceIndex: "Indeks Sumber",
+    uiComponents: "Komponen UI",
   },
 };
 
@@ -266,15 +331,15 @@ const en: typeof id = {
     switchLang: "Ganti ke Indonesia",
   },
   hero: {
-    badge: "Systems Architect // 2026.V1",
+    badge: "Available for work",
     description:
-      "Redefining <b>Digital Frontiers</b> through autonomous logic and elite aesthetic engineering.",
-    launch: "Launch Project",
-    link: "Establish Link",
-    hud: "Progress // Trace",
+      "Building <b>digital products</b> that are clean, fast, and a joy to use — with technical rigor and an eye for design.",
+    launch: "View Work",
+    link: "Get in Touch",
+    hud: "Scroll",
     location: "Location",
     status: "Status",
-    live: "Live",
+    live: "Available",
   },
   skills: {
     titleTop: "Toolbox",
@@ -364,12 +429,13 @@ const en: typeof id = {
     },
   },
   projects: {
-    tag: "Project_Vault_2026",
-    titleTop: "REFINED",
-    titleBottom: "SYSTEMS.",
+    tag: "Selected Work",
+    titleTop: "Refined",
+    titleBottom: "Systems.",
     intro:
       "Digital architecture with high-performance engineering and functional aesthetics.",
     explore: "Explore Archive",
+    view: "View Project",
     items: {
       "01": {
         title: "Diva Mobile Ecosystem",
@@ -396,17 +462,81 @@ const en: typeof id = {
       },
     },
   },
+  archive: {
+    back: "Back",
+    tag: "Project Archive",
+    titleTop: "All",
+    titleBottom: "Work.",
+    intro:
+      "A collection of projects from 2023—2026: web systems, fintech solutions, and corporate applications.",
+    searchPlaceholder: "Search title or technology...",
+    clearSearch: "Clear search",
+    all: "All",
+    noResults: "No results",
+    noResultsHint: "Try a different keyword or category.",
+    projectsCount: "Projects",
+    categoriesCount: "Categories",
+    code: "Code",
+    live: "Live site",
+    statuses: {
+      Active: "Active",
+      Beta: "Beta",
+      Archived: "Archived",
+    },
+    items: {
+      "01": {
+        description:
+          "Personal portfolio site with smooth animation and high performance.",
+      },
+      "02": {
+        description:
+          "Digital canteen POS with Midtrans payment integration.",
+      },
+      "03": {
+        description:
+          "Smartphone retail platform with catalog and inventory management.",
+      },
+      "04": {
+        description:
+          "Personal finance management app with cash-flow tracking.",
+      },
+      "05": {
+        description:
+          "Micro-banking system simulation for savings-and-loan transactions.",
+      },
+      "06": {
+        description:
+          "Corporate website for industrial mining logistics.",
+      },
+      "07": {
+        description:
+          "Multi-national international trade portal.",
+      },
+      "08": {
+        description:
+          "Shipping company website for fleet and cargo management.",
+      },
+      "09": {
+        description:
+          "Full e-commerce application with an integrated payment gateway.",
+      },
+      "10": {
+        description:
+          "Mobile company-profile app for a shipping company.",
+      },
+    },
+  },
   experience: {
-    tag: "Career_Matrix_v4.0",
+    tag: "Experience",
     titleTop: "History",
     titleBottom: "Encoded.",
     intro:
       "A professional track record in system development and advanced digital infrastructure architecture.",
-    summary: "Executive_Summary",
-    achievements: "Key_Achievements",
-    readLog: "Read Full Log",
-    close: "Close Log",
-    role: "Lead_System_Architect",
+    summary: "Summary",
+    achievements: "Key Achievements",
+    readLog: "Read More",
+    close: "Close",
+    role: "Role",
     items: {
       "01": {
         role: "Procurement & System Support",
@@ -441,42 +571,42 @@ const en: typeof id = {
     },
   },
   contact: {
-    badge: "Ready_to_Collaborate",
+    badge: "Open to collaboration",
     titleTop: "Elevate Your",
     titleBottom: "Digital Core.",
     paragraph:
       "Uniting robust technical architecture with intuitive design. Let's discuss turning your vision into digital reality.",
-    initInquiry: "Initialize_Inquiry",
+    initInquiry: "Get in Touch",
     terminalDesc:
-      "System ready to receive instructions. Hit copy or click send to open a direct communication protocol.",
-    masterAddress: "Master_Address",
-    copy: "COPY_UID",
-    copied: "DONE",
-    openMail: "Open_In_Mail_App",
-    localTime: "Current_Local_Time",
-    baseLocation: "Base_Location",
-    uptime: "Uptime_Status",
-    latency: "Global_Latency",
+      "Copy the email address or hit send to start a direct conversation.",
+    masterAddress: "Email address",
+    copy: "Copy email",
+    copied: "Copied",
+    openMail: "Open in mail app",
+    localTime: "Local time",
+    baseLocation: "Location",
+    uptime: "Availability",
+    latency: "Response",
   },
   footer: {
     bio: "Building the digital infrastructure of the future with high precision and uncompromising performance.",
-    initContact: "Initialize_Contact",
-    ready: "Ready For Deployment?",
+    initContact: "Get in Touch",
+    ready: "Ready to Start a Project?",
     readyDesc:
-      "Open the communication protocol and let's build something revolutionary together.",
-    startProtocol: "Start_Protocol",
-    privacy: "Privacy_Protocol",
-    backToTop: "Back_to_Root",
-    navRoot: "Navigation_Root",
-    archiveGroup: "Artifact_Archive",
-    coreInterface: "Core_Interface",
+      "Let's talk and build something memorable together.",
+    startProtocol: "Start a Conversation",
+    privacy: "Privacy Policy",
+    backToTop: "Back to Top",
+    navRoot: "Navigation",
+    archiveGroup: "Archive",
+    coreInterface: "Main Pages",
     laboratory: "Laboratory",
-    systemLog: "System_Log",
-    knowledgeBase: "Knowledge_Base",
-    projects2026: "Projects_2026",
-    legacyVault: "Legacy_Vault",
-    sourceIndex: "Source_Index",
-    uiComponents: "UI_Components",
+    systemLog: "Changelog",
+    knowledgeBase: "Documentation",
+    projects2026: "Projects 2026",
+    legacyVault: "Past Work",
+    sourceIndex: "Source Index",
+    uiComponents: "UI Components",
   },
 };
 

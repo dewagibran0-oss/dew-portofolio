@@ -88,7 +88,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             className={`flex items-center gap-2 px-2 py-1.5 rounded-full border transition-all duration-500 ${
               scrolled
-                ? "bg-black/20 backdrop-blur-xl border-white/10 shadow-2xl"
+                ? "bg-[var(--bg-card)] border-[var(--hairline)] shadow-lg"
                 : "bg-transparent border-transparent"
             }`}
           >
@@ -96,7 +96,7 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="relative px-5 py-2 text-[11px] font-mono tracking-[0.2em] text-gray-400 hover:text-white transition-colors group"
+                className="relative px-5 py-2 text-[11px] font-medium tracking-[0.2em] text-gray-400 hover:text-white transition-colors group"
               >
                 <span className="relative z-10">{link.name.toUpperCase()}</span>
                 <motion.span className="absolute inset-0 bg-white/5 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300" />
@@ -119,7 +119,7 @@ export default function Navbar() {
               className="h-10 px-3 flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] text-white/70 hover:text-secondary hover:border-secondary/40 transition-colors"
             >
               <Languages size={16} />
-              <span className="text-[11px] font-mono font-bold tracking-widest uppercase">
+              <span className="text-[11px] font-bold tracking-widest uppercase">
                 {lang}
               </span>
             </button>
@@ -129,7 +129,7 @@ export default function Navbar() {
             href="#contact"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 bg-secondary text-black text-[11px] font-bold rounded-full hover:bg-white transition-all tracking-[0.1em] magnetic"
+            className="px-6 py-3 bg-[var(--maroon)] text-white text-[11px] font-bold rounded-full hover:bg-[var(--maroon-strong)] transition-all tracking-[0.1em] magnetic"
           >
             {t.nav.startProject}
           </motion.a>
@@ -172,9 +172,8 @@ export default function Navbar() {
               style={{ transformOrigin: "90% 5%", willChange: "transform, opacity" }}
               className="fixed inset-0 bg-[var(--bg)] flex flex-col items-center z-[101] transform-gpu pt-24 pb-10"
             >
-              {/* Aurora glow — radial-gradient statis (tanpa filter blur → nol beban GPU) */}
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_45%_at_88%_8%,rgba(34,211,238,0.14),transparent_60%)]" />
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_40%_at_12%_92%,rgba(99,102,241,0.10),transparent_60%)]" />
+              {/* Tint maroon sangat lembut — radial statis (nol beban GPU) */}
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_45%_at_88%_8%,rgba(140,47,57,0.08),transparent_60%)]" />
 
               {/* Links — stagger slide-up (transform+opacity, ringan) */}
               <motion.nav
@@ -197,7 +196,7 @@ export default function Navbar() {
                     transition={{ duration: 0.45, ease: [0.33, 1, 0.68, 1] }}
                     className="group flex items-baseline gap-3 text-5xl font-space font-bold text-white transition-colors"
                   >
-                    <span className="font-mono text-sm font-medium text-secondary/50 tracking-widest">
+                    <span className="text-sm font-medium text-secondary/50 tracking-widest">
                       0{i + 1}
                     </span>
                     <span className="transition-colors duration-300 group-hover:text-secondary">
@@ -228,7 +227,7 @@ export default function Navbar() {
                     className="h-11 px-4 flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] text-white/80 hover:text-secondary hover:border-secondary/40 transition-colors"
                   >
                     <Languages size={18} />
-                    <span className="text-xs font-mono font-bold tracking-widest uppercase">
+                    <span className="text-xs font-bold tracking-widest uppercase">
                       {lang}
                     </span>
                   </button>
@@ -237,7 +236,7 @@ export default function Navbar() {
                 <div className="h-px w-24 bg-white/10" />
 
                 <div className="flex flex-col items-center gap-2">
-                  <p className="text-gray-500 font-mono text-[10px] tracking-widest uppercase">
+                  <p className="text-gray-500 text-[10px] font-medium tracking-widest uppercase">
                     {t.nav.getInTouch}
                   </p>
                   <a

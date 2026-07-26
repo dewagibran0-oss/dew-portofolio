@@ -1,78 +1,103 @@
 @import "tailwindcss";
 
 @theme {
-  --color-black: #0a0a0a;
-  --color-navy: #0f172a;
-  --color-primary: #3b82f6;
-  --color-secondary: #22d3ee;
-  --color-accent: #8b5cf6;
-  --color-white-soft: #e5e7eb;
+  --color-black: #0c0a09;
+  --color-navy: #1c1917;
+  --color-primary: #8c2f39;
+  --color-secondary: #8c2f39;
+  --color-accent: #6d2430;
+  --color-white-soft: #f5f0eb;
+  --font-serif-display: var(--font-fraunces), Georgia, serif;
 }
 
 /*
  * ============================================================
- *  THEME ENGINE (Dark default / Light variant)
- *  Nilai DARK identik dengan desain awal → tampilan gelap tidak berubah.
- *  Mode terang meng-override token warna + palet Tailwind (var(--color-*))
+ *  THEME ENGINE (Light default / Dark variant)
+ *  Palet: warm ivory + aksen maroon (light) · warm black + maroon (dark).
+ *  Mode gelap meng-override token warna + palet Tailwind (var(--color-*))
  *  sehingga hampir semua utility (text-white, text-zinc-500, dsb) ikut
  *  berbalik tanpa perlu menyentuh ratusan class satu per satu.
  * ============================================================
  */
 @layer base {
   :root,
-  html[data-theme="dark"] {
-    color-scheme: dark;
-
-    /* Background tokens (menggantikan literal hex gelap di komponen) */
-    --bg: #020617;
-    --bg-section: #020202;
-    --bg-elevated: #050505;
-    --bg-deep: #030303;
-    --bg-card: #0a0a0a;
-    --bg-panel: #09090b;
-
-    /* Semantic UI tokens */
-    --hairline: rgba(255, 255, 255, 0.1);
-  }
-
   html[data-theme="light"] {
     color-scheme: light;
 
-    /* Background tokens versi terang */
-    --bg: #f6f8fc;
-    --bg-section: #eef2f8;
+    /* Background tokens versi terang (warm ivory) */
+    --bg: #faf7f2;
+    --bg-section: #f4efe8;
     --bg-elevated: #ffffff;
-    --bg-deep: #f1f4fa;
+    --bg-deep: #f6f2ea;
     --bg-card: #ffffff;
     --bg-panel: #ffffff;
 
-    --hairline: rgba(15, 23, 42, 0.12);
+    --hairline: rgba(28, 25, 23, 0.1);
 
-    /* --- Palette remap: balikkan makna warna untuk mode terang --- */
-    /* "white" = warna teks utama → jadi gelap; dipakai juga utk surface tipis */
-    --color-white: #0f172a;
+    /* Aksen maroon */
+    --maroon: #8c2f39;
+    --maroon-strong: #6d2430;
+
+    /* --- Palette remap: teks gelap hangat di latar terang --- */
+    --color-white: #1c1917;
     --color-black: #ffffff;
 
-    /* Skala abu netral (dibalik + dijaga kontras AA utk teks kecil) */
-    --color-zinc-300: #334155;
-    --color-zinc-400: #475569;
-    --color-zinc-500: #52627a;
-    --color-zinc-600: #5b6b82;
-    --color-zinc-700: #64748b;
-    --color-zinc-800: #cbd5e1;
-    --color-zinc-900: #e2e8f0;
+    --color-zinc-300: #44403c;
+    --color-zinc-400: #57534e;
+    --color-zinc-500: #57534e;
+    --color-zinc-600: #68615b;
+    --color-zinc-700: #79716b;
+    --color-zinc-800: #e7e0d8;
+    --color-zinc-900: #efe9e1;
 
-    --color-gray-300: #334155;
-    --color-gray-400: #475569;
-    --color-gray-500: #52627a;
-    --color-gray-600: #5b6b82;
-    --color-gray-700: #64748b;
+    --color-gray-300: #44403c;
+    --color-gray-400: #57534e;
+    --color-gray-500: #57534e;
+    --color-gray-600: #68615b;
+    --color-gray-700: #79716b;
 
-    /* Aksen sedikit digelapkan agar teks aksen lolos kontras di latar terang */
-    --color-secondary: #0e7490;
-    --color-cyan-400: #0891b2;
-    --color-cyan-500: #0e7490;
-    --color-primary: #2563eb;
+    --color-primary: #8c2f39;
+    --color-secondary: #8c2f39;
+    --color-accent: #6d2430;
+  }
+
+  html[data-theme="dark"] {
+    color-scheme: dark;
+
+    /* Background tokens versi gelap (warm black, bukan biru) */
+    --bg: #0c0a09;
+    --bg-section: #121010;
+    --bg-elevated: #161312;
+    --bg-deep: #0f0d0c;
+    --bg-card: #1a1717;
+    --bg-panel: #171414;
+
+    --hairline: rgba(245, 240, 235, 0.1);
+
+    /* Aksen maroon dicerahkan agar kontras di latar hitam */
+    --maroon: #c94f5d;
+    --maroon-strong: #8c2f39;
+
+    --color-white: #f5f0eb;
+    --color-black: #0c0a09;
+
+    --color-zinc-300: #d6d0ca;
+    --color-zinc-400: #a8a29e;
+    --color-zinc-500: #8f8983;
+    --color-zinc-600: #6b655f;
+    --color-zinc-700: #57534e;
+    --color-zinc-800: #292524;
+    --color-zinc-900: #1c1917;
+
+    --color-gray-300: #d6d0ca;
+    --color-gray-400: #a8a29e;
+    --color-gray-500: #8f8983;
+    --color-gray-600: #6b655f;
+    --color-gray-700: #57534e;
+
+    --color-primary: #c94f5d;
+    --color-secondary: #c94f5d;
+    --color-accent: #8c2f39;
   }
 }
 
@@ -86,7 +111,7 @@
 
   body {
     background: var(--bg);
-    color: var(--color-white-soft);
+    color: #1c1917;
     cursor: none;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -95,8 +120,15 @@
     transition: background-color 0.4s ease, color 0.4s ease;
   }
 
-  html[data-theme="light"] body {
-    color: #1e293b;
+  html[data-theme="dark"] body {
+    color: var(--color-white-soft);
+  }
+
+  /* Judul memakai serif editorial (Fraunces) */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif-display);
   }
 
   /* Perangkat tanpa mouse (sentuh) → tampilkan kursor asli */
@@ -107,8 +139,8 @@
   }
 
   ::selection {
-    background: rgba(34, 211, 238, 0.3);
-    color: white;
+    background: rgba(140, 47, 57, 0.25);
+    color: inherit;
   }
 }
 
@@ -118,22 +150,44 @@
     background-color: var(--bg);
   }
 
+  /* Kartu solid: pengganti glassmorphism (tanpa backdrop-filter) */
   .glass {
-    background: rgba(10, 10, 10, 0.6);
-    @supports (backdrop-filter: blur(12px)) {
-      backdrop-filter: blur(12px);
-      background: rgba(255, 255, 255, 0.03);
-    }
+    background: var(--bg-card);
     border: 1px solid var(--hairline);
-    transform: translateZ(0);
+    box-shadow: 0 1px 2px rgba(28, 25, 23, 0.04),
+      0 8px 24px rgba(28, 25, 23, 0.06);
+  }
+
+  html[data-theme="dark"] .glass {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 
   .glow-primary {
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+    box-shadow: none;
   }
 
   .vertical-text {
     writing-mode: vertical-rl;
+  }
+
+  /* Aksen maroon siap pakai */
+  .text-maroon {
+    color: var(--maroon);
+  }
+  .bg-maroon {
+    background-color: var(--maroon);
+  }
+  .border-maroon {
+    border-color: var(--maroon);
+  }
+
+  /* Sembunyikan scrollbar untuk baris filter yang bisa digeser */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -141,78 +195,46 @@
 @supports (scrollbar-width: thin) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #1f1f23 #050505;
+    scrollbar-color: #d8d0c6 #f4efe8;
   }
 }
-html[data-theme="light"] * {
-  scrollbar-color: #cbd5e1 #eef2f8;
+html[data-theme="dark"] * {
+  scrollbar-color: #292524 #121010;
 }
 
 ::-webkit-scrollbar {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: #f4efe8;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f1f23;
+  background: #d8d0c6;
   border-radius: 20px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+  background: var(--maroon);
 }
-html[data-theme="light"] ::-webkit-scrollbar-track {
-  background: #eef2f8;
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #121010;
 }
-html[data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #292524;
 }
 
 /*
  * ============================================================
- *  CATATAN: content-visibility:auto DIHAPUS.
- *  Sebelumnya section berat baru dirender saat mendekati viewport
- *  → di mobile menimbulkan lag + "konten kosong" pop-in telat, dan
- *  anchor dari menu navbar meleset karena tinggi perkiraan (800px)
- *  jauh dari tinggi asli. Section sudah dilazy-load via next/dynamic
- *  + animasi whileInView, jadi menghapus ini tidak menurunkan skor
- *  (LCP/FCP semuanya di Hero above-the-fold) sekaligus menghilangkan
- *  jank scroll. Class .cv-auto dibiarkan sebagai no-op yang aman.
+ *  CATATAN: content-visibility:auto DIHAPUS (lihat riwayat).
+ *  Section sudah dilazy-load via next/dynamic + whileInView.
+ *  Class .cv-auto dibiarkan sebagai no-op yang aman.
  * ============================================================
  */
 
 /*
  * ============================================================
- *  PERF iOS (WebKit): Safari & Chrome di iPhone sama-sama WebKit dan
- *  merender `backdrop-filter` + `mix-blend-mode` sangat lambat saat scroll
- *  (tiap kartu blur mengambil ulang sampel aurora fixed di belakangnya →
- *  blur-di-atas-blur; mix-blend memaksa re-composite seluruh stack).
- *  Efek ini dimatikan HANYA di iOS. Android & desktop tetap penuh.
- *  `@supports (-webkit-touch-callout: none)` hanya cocok di WebKit iOS,
- *  bukan Safari macOS — jadi desktop tak terpengaruh.
- *
- *  Panel tetap terbaca: semua sudah punya background semi-transparan +
- *  border, jadi bentuknya utuh, hanya kehilangan blur (tak kasat mata
- *  di layar kecil) demi scroll yang benar-benar mulus.
+ *  CATATAN PERF: patch iOS lama (matikan backdrop-filter, cap blur 90-160px
+ *  → 24px, netralkan mix-blend) DIHAPUS karena redesign ivory/maroon tidak
+ *  lagi memakai glassmorphism, aurora blur raksasa, maupun blend mode.
+ *  Semua efek kini murni background-color + border + shadow ringan.
  * ============================================================
  */
-@supports (-webkit-touch-callout: none) {
-  [class*="backdrop-blur"] {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-  }
-  [class*="mix-blend"] {
-    mix-blend-mode: normal !important;
-  }
-  /*
-   * Blob glow dekoratif memakai blur arbitrase besar (blur-[90px]..[160px]).
-   * WebKit iOS me-rasterisasi filter blur radius besar dengan sangat mahal,
-   * dan mengulanginya saat section masuk viewport → jank scroll global.
-   * Batasi ke 24px: nuansa glow tetap ada, biaya paint anjlok drastis.
-   * Selektor `blur-[` hanya cocok utility blur arbitrase (blob), BUKAN
-   * `backdrop-blur-*` (nama tetap) sehingga konten kartu tak ikut ter-blur.
-   */
-  [class*="blur-["] {
-    filter: blur(24px) !important;
-  }
-}

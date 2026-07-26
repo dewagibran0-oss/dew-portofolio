@@ -49,7 +49,7 @@ const docsData: DocSection[] = [
   },
   {
     category: "Arsitektur Sistem",
-    icon: <Layers size={18} className="text-purple-400" />,
+    icon: <Layers size={18} className="text-[#c94f5d]" />,
     items: [
       { 
         id: "folder", 
@@ -175,11 +175,11 @@ export default function DocsPage() {
           </button>
           
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-500">
+            <div className="w-10 h-10 rounded-xl bg-[#8c2f39] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500">
               <BookOpen size={20} className="text-white" />
             </div>
             <span className="font-bold text-white tracking-tighter text-2xl hidden sm:block">
-              DEWA<span className="text-blue-500">.DOCS</span>
+              DEWA<span className="text-[#c94f5d]">.DOCS</span>
             </span>
           </Link>
         </div>
@@ -300,8 +300,8 @@ export default function DocsPage() {
                       <h4 className="text-white text-xl font-bold mb-4">Engineering Standard</h4>
                       <p className="text-slate-500 leading-relaxed">Gunakan prinsip DRY (Don&apos;t Repeat Yourself) dan pastikan setiap komponen memiliki dokumentasi prop-types yang jelas.</p>
                     </div>
-                    <div className="p-8 rounded-[2.5rem] bg-[#030712] border border-white/5 hover:border-purple-500/30 transition-all duration-500 group">
-                      <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500 mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-transform">
+                    <div className="p-8 rounded-[2.5rem] bg-[#0f0d0c] border border-white/5 hover:border-[#c94f5d]/30 transition-all duration-500 group">
+                      <div className="w-14 h-14 rounded-2xl bg-[#c94f5d]/10 flex items-center justify-center text-[#c94f5d] mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-transform">
                         <Hash size={28} />
                       </div>
                       <h4 className="text-white text-xl font-bold mb-4">Accessibility First</h4>
@@ -348,10 +348,7 @@ export default function DocsPage() {
       </div>
 
       {/* --- BACKGROUND ELEMENTS --- */}
-      <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-600/5 blur-[160px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-purple-600/5 blur-[160px] rounded-full" />
-      </div>
+      <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden" />
 
       {/* --- CUSTOM SCROLLBAR STYLE --- */}
       <style jsx global>{`

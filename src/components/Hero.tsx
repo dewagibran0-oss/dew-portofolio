@@ -3,25 +3,17 @@
 import { motion, useScroll, useTransform, useSpring, useReducedMotion, type MotionValue } from "framer-motion";
 import { useRef, useState, useEffect, memo } from "react";
 import Link from "next/link";
-import HeroScene from "./HeroScene";
 import { useLang } from "@/lib/i18n";
 
-// 1. Background Layer dengan Optimal Re-rendering
+// 1. Background Layer — bersih: warna dasar ivory/hitam + vignette lembut.
+//    (Partikel WebGL & aurora blur dihapus pada redesign ivory/maroon.)
 const BackgroundLayer = memo(() => (
-  <div className="absolute inset-0 z-0 pointer-events-none transform-gpu overflow-hidden">
-    <HeroScene />
+  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-[var(--bg)]">
+    {/* Grainy Texture Overlay — tekstur kertas halus, di-host lokal */}
+    <div className="absolute inset-0 opacity-[0.15] bg-[url('/noise.svg')] pointer-events-none" />
 
-    {/* High-End Ambient Lighting — blur diperkecil (140→90px) & animate-pulse
-        dihapus agar tidak me-repaint area besar selama jendela LCP. */}
-    <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/10 blur-[90px] rounded-full mix-blend-screen opacity-40" />
-    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[90px] rounded-full mix-blend-screen opacity-30" />
-
-    {/* Grainy Texture Overlay — di-host lokal (hindari request pihak ketiga) */}
-    <div className="absolute inset-0 opacity-[0.2] bg-[url('/noise.svg')] mix-blend-soft-light pointer-events-none" />
-
-    {/* Cinematic Vignette & Bottom Masking */}
-    <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg)]/60 via-transparent to-[var(--bg)]" />
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_0%,var(--bg)_95%)]" />
+    {/* Gradasi tepi sangat lembut agar konten menyatu dengan section berikut */}
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--bg-section)]" />
   </div>
 ));
 BackgroundLayer.displayName = "BackgroundLayer";
@@ -60,13 +52,13 @@ export default function Hero() {
 
   // WhatsApp Handler
   const handleWhatsApp = () => {
-    window.open("https://wa.me/62881025020924", "_blank"); // Ganti dengan nomor Anda
+    window.open("https://wa.me/62881025020924", "_blank");
   };
 
   return (
-    <section 
+    <section
       ref={containerRef}
-      className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-[var(--bg)] selection:bg-cyan-500/30"
+      className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-[var(--bg)]"
     >
       <BackgroundLayer />
 
@@ -78,25 +70,22 @@ export default function Hero() {
         }
         className="relative z-10 w-full flex flex-col items-center justify-center px-6 py-20"
       >
-            {/* 1. Floating Badge Status */}
+            {/* 1. Badge Status — titik maroon statis, tanpa ping */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
               className="mb-8 md:mb-14"
             >
-              <div className="px-5 py-2 rounded-full border border-white/5 bg-white/[0.03] backdrop-blur-2xl flex items-center gap-3 shadow-2xl">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute h-full w-full rounded-full bg-cyan-400 opacity-40"></span>
-                  <span className="relative h-2 w-2 rounded-full bg-cyan-500"></span>
-                </span>
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/60">
+              <div className="px-5 py-2 rounded-full border border-[var(--hairline)] bg-[var(--bg-card)] flex items-center gap-3 shadow-sm">
+                <span className="relative h-2 w-2 rounded-full bg-[var(--maroon)]" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.4em] text-zinc-500">
                   {t.hero.badge}
                 </span>
               </div>
             </motion.div>
-            
-            {/* 2. Headline - Extreme Mobile Typography */}
+
+            {/* 2. Headline — serif editorial */}
             {/* Elemen LCP: render terlihat sejak paint pertama (tanpa opacity-0 awal)
                 agar LCP tidak menunggu hydration/animasi. */}
             <div className="relative text-center mb-12 md:mb-16">
@@ -107,24 +96,21 @@ export default function Hero() {
                 className="flex flex-col items-center justify-center"
               >
                 {/* DEWA & GIBRAN dengan ukuran sama besar di mobile */}
-                <h1 className="flex flex-col items-center leading-[0.8] tracking-[-0.07em]">
-                  <span className="text-white text-[22vw] md:text-[11vw] font-black uppercase">
-                    DEWA
+                <h1 className="flex flex-col items-center leading-[0.9] tracking-[-0.03em]">
+                  <span className="text-[var(--color-white)] text-[20vw] md:text-[10vw] font-semibold">
+                    Dewa
                   </span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white/90 to-cyan-500/50 text-[22vw] md:text-[11vw] font-black uppercase italic mt-1 pr-2">
-                    GIBRAN
+                  <span className="text-[var(--maroon)] text-[20vw] md:text-[10vw] font-semibold italic mt-1 pr-2">
+                    Gibran
                   </span>
                 </h1>
-                
-                {/* Decorative Aurora behind name */}
-                <div className="absolute inset-0 bg-cyan-500/10 blur-[60px] -z-10 rounded-full opacity-50 select-none" />
               </motion.div>
-              
-              <motion.div 
+
+              <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: "100px" }}
                 transition={{ delay: 1, duration: 1.5 }}
-                className="h-[1px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto mt-10 md:mt-14 shadow-[0_0_15px_rgba(6,182,212,0.5)]"
+                className="h-[2px] bg-[var(--maroon)] mx-auto mt-10 md:mt-14 rounded-full"
               />
             </div>
 
@@ -136,7 +122,7 @@ export default function Hero() {
               className="max-w-2xl text-center space-y-12"
             >
               <p
-                className="text-white/40 text-[11px] md:text-xl font-light leading-relaxed tracking-widest uppercase italic px-4 [&>b]:text-white [&>b]:font-medium [&>b]:not-italic"
+                className="text-zinc-500 text-sm md:text-lg font-light leading-relaxed tracking-wide px-4 [&>b]:text-[var(--color-white)] [&>b]:font-medium"
                 dangerouslySetInnerHTML={{ __html: t.hero.description }}
               />
 
@@ -144,21 +130,20 @@ export default function Hero() {
                 {/* Tombol ke /archive */}
                 <Link href="/archive" className="w-full sm:w-1/2">
                   <motion.button
-                    whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(255, 255, 255, 0.1)" }}
+                    whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] rounded-sm transition-all relative group overflow-hidden"
+                    className="w-full py-5 bg-[var(--maroon)] text-white text-[11px] font-bold uppercase tracking-[0.3em] rounded-sm transition-all relative group overflow-hidden"
                   >
-                    <span className="relative z-10 group-hover:text-white transition-colors duration-500">{t.hero.launch}</span>
-                    <div className="absolute inset-0 bg-cyan-500 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                    <span className="relative z-10">{t.hero.launch}</span>
+                    <div className="absolute inset-0 bg-[var(--maroon-strong)] translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                   </motion.button>
                 </Link>
 
                 {/* Tombol ke WhatsApp */}
                 <motion.button
                   onClick={handleWhatsApp}
-                  whileHover={{ backgroundColor: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.3)" }}
                   whileTap={{ scale: 0.97 }}
-                  className="w-full sm:w-1/2 py-5 border border-white/10 backdrop-blur-md text-white text-[11px] font-black uppercase tracking-[0.3em] rounded-sm transition-all"
+                  className="w-full sm:w-1/2 py-5 border border-[var(--hairline)] bg-[var(--bg-card)] text-[var(--color-white)] text-[11px] font-bold uppercase tracking-[0.3em] rounded-sm transition-colors hover:border-[var(--maroon)] hover:text-[var(--maroon)]"
                 >
                   {t.hero.link}
                 </motion.button>
@@ -172,43 +157,43 @@ export default function Hero() {
   );
 }
 
-// Sub-Component: Right Side HUD
+// Sub-Component: Right Side scroll indicator
 function ScrollHUD({ smoothProgress }: { smoothProgress: MotionValue<number> }) {
   const { t } = useLang();
   return (
-    <div className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-20">
-      <div className="h-40 w-[1px] bg-white/5 relative">
+    <div className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center gap-10 z-20">
+      <div className="h-40 w-[1px] bg-[var(--hairline)] relative">
         <motion.div
           style={{ scaleY: smoothProgress }}
-          className="absolute top-0 w-full bg-cyan-500 origin-top h-full shadow-[0_0_10px_rgba(34,211,238,0.8)]"
+          className="absolute top-0 w-full bg-[var(--maroon)] origin-top h-full"
         />
       </div>
-      <span className="text-[8px] font-mono text-cyan-500 uppercase tracking-[0.5em] rotate-90 whitespace-nowrap opacity-50">
+      <span className="text-[9px] text-zinc-500 uppercase tracking-[0.5em] rotate-90 whitespace-nowrap">
         {t.hero.hud}
       </span>
     </div>
   );
 }
 
-// Sub-Component: Frame Elements (Professional Technical Look)
+// Sub-Component: Frame Elements — aksen sudut tipis, meta ringkas
 function TechnicalFrame() {
   const { t } = useLang();
   return (
     <div className="absolute inset-0 z-[5] pointer-events-none p-6 md:p-10">
       {/* Corner Accents */}
-      <div className="absolute top-10 left-10 w-12 h-12 border-t border-l border-white/10" />
-      <div className="absolute bottom-10 right-10 w-12 h-12 border-b border-r border-white/10" />
+      <div className="absolute top-10 left-10 w-12 h-12 border-t border-l border-[var(--hairline)]" />
+      <div className="absolute bottom-10 right-10 w-12 h-12 border-b border-r border-[var(--hairline)]" />
 
-      {/* Real-time Meta-data (Professional Look) */}
+      {/* Meta ringkas */}
       <div className="absolute bottom-10 left-10 hidden md:flex flex-col gap-2">
         <div className="flex gap-6">
           <div className="flex flex-col">
-            <span className="text-[7px] text-white/40 uppercase tracking-widest font-mono">{t.hero.location}</span>
-            <span className="text-[9px] text-white/60 font-mono">IDN // JKTA</span>
+            <span className="text-[8px] text-zinc-500 uppercase tracking-widest">{t.hero.location}</span>
+            <span className="text-[10px] text-zinc-400">Jakarta, ID</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[7px] text-white/40 uppercase tracking-widest font-mono">{t.hero.status}</span>
-            <span className="text-[9px] text-cyan-500 font-mono animate-pulse">{t.hero.live}</span>
+            <span className="text-[8px] text-zinc-500 uppercase tracking-widest">{t.hero.status}</span>
+            <span className="text-[10px] text-[var(--maroon)]">{t.hero.live}</span>
           </div>
         </div>
       </div>

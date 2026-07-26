@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // Pin root Turbopack ke folder proyek. Tanpa ini, node_modules nyasar di
+  // home directory membuat Turbopack salah mendeteksi workspace root →
+  // "Can't resolve 'tailwindcss' in C:\Users\<user>".
+  turbopack: {
+    root: __dirname,
+  },
   // AVIF didahulukan (≈20-30% lebih kecil dari WebP) → payload gambar mobile
   // lebih ringan tanpa mengubah tampilan. minimumCacheTTL memperpanjang cache
   // hasil optimasi agar kunjungan berikutnya instan.

@@ -14,7 +14,7 @@ import { useLang } from "@/lib/i18n";
  */
 const EMAIL_DATA = {
   address: "dewagibran0@gmail.com",
-  display: "DEWAGIBRAN0@GMAIL.COM"
+  display: "dewagibran0@gmail.com"
 };
 
 const SOCIAL_LINKS = [
@@ -58,9 +58,8 @@ export default function ContactProduction() {
 
   return (
     <section className="relative py-32 md:py-48 px-6 bg-[var(--bg-deep)] overflow-hidden">
-      {/* Dynamic Background Elements */}
+      {/* Grid halus sebagai tekstur latar */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/[0.03] blur-[120px] rounded-full" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
       </div>
 
@@ -73,13 +72,10 @@ export default function ContactProduction() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="inline-flex items-center gap-3 px-3 py-1 rounded-full bg-cyan-500/5 border border-cyan-500/10"
+              className="inline-flex items-center gap-3 px-3 py-1 rounded-full bg-[var(--maroon)]/10 border border-[var(--maroon)]/25"
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-              </span>
-              <span className="text-cyan-500 font-mono text-[10px] uppercase tracking-[0.3em] font-semibold">{t.contact.badge}</span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--maroon)]" />
+              <span className="text-[var(--maroon)] text-[10px] uppercase tracking-[0.3em] font-semibold">{t.contact.badge}</span>
             </motion.div>
 
             <motion.div
@@ -88,9 +84,9 @@ export default function ContactProduction() {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
-              <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.85] mb-8 font-space">
+              <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.85] mb-8">
                 {t.contact.titleTop} <br />
-                <span className="text-zinc-800 italic font-light">{t.contact.titleBottom}</span>
+                <span className="text-[var(--maroon)] italic font-light">{t.contact.titleBottom}</span>
               </h2>
               <p className="text-zinc-500 text-lg md:text-xl font-light leading-relaxed max-w-md">
                 {t.contact.paragraph}
@@ -102,8 +98,7 @@ export default function ContactProduction() {
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  whileHover={{ y: -3, backgroundColor: "rgba(255,255,255,0.05)" }}
-                  className="flex items-center gap-3 px-5 py-2.5 bg-zinc-900/30 border border-zinc-800/50 rounded-xl text-zinc-400 font-mono text-[11px] uppercase tracking-widest transition-all"
+                  className="flex items-center gap-3 px-5 py-2.5 bg-[var(--bg-card)] border border-[var(--hairline)] rounded-xl text-zinc-400 text-[11px] font-medium uppercase tracking-widest transition-all hover:border-[var(--maroon)]/40 hover:text-[var(--maroon)]"
                 >
                   {link.icon}
                   {link.name}
@@ -118,49 +113,48 @@ export default function ContactProduction() {
               initial={{ opacity: 0, scale: 0.98 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="relative rounded-[2.5rem] bg-[var(--bg-card)] border border-white/5 shadow-2xl overflow-hidden"
+              className="relative rounded-[2.5rem] bg-[var(--bg-card)] border border-[var(--hairline)] shadow-xl overflow-hidden"
             >
-              {/* Terminal Title Bar */}
-              <div className="bg-zinc-900/50 px-8 py-5 border-b border-white/5 flex items-center justify-between">
+              {/* Title Bar */}
+              <div className="bg-[var(--bg-section)] px-8 py-5 border-b border-[var(--hairline)] flex items-center justify-between">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 rounded-full bg-zinc-800" />
                   <div className="w-3 h-3 rounded-full bg-zinc-800" />
                   <div className="w-3 h-3 rounded-full bg-zinc-800" />
                 </div>
-                <div className="flex items-center gap-2 text-zinc-600 font-mono text-[10px] tracking-widest">
-                  <Terminal size={12} /> SESSION_ID: DG-7782-X
+                <div className="flex items-center gap-2 text-zinc-600 text-[10px] font-medium tracking-widest">
+                  <Terminal size={12} /> {EMAIL_DATA.display}
                 </div>
               </div>
 
-              {/* Terminal Body */}
+              {/* Body */}
               <div className="p-8 md:p-14 space-y-12">
                 <div className="space-y-4">
-                  <h3 className="text-zinc-400 font-mono text-sm uppercase tracking-[0.2em] flex items-center gap-2">
-                    <span className="text-cyan-500">{">"}</span> {t.contact.initInquiry}
+                  <h3 className="text-zinc-400 text-sm font-semibold uppercase tracking-[0.2em] flex items-center gap-2">
+                    {t.contact.initInquiry}
                   </h3>
-                  <p className="text-zinc-600 font-mono text-xs leading-relaxed max-w-xl">
+                  <p className="text-zinc-600 text-xs leading-relaxed max-w-xl">
                     {t.contact.terminalDesc}
                   </p>
                 </div>
 
                 {/* Email Display Interaction */}
                 <div className="relative group cursor-pointer">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 bg-zinc-900/40 border border-white/5 rounded-3xl gap-6">
+                  <div className="relative flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 bg-[var(--bg-section)] border border-[var(--hairline)] rounded-3xl gap-6">
                     <div className="flex items-center gap-5">
-                      <div className="p-4 bg-black rounded-2xl text-cyan-500 shadow-inner">
+                      <div className="p-4 bg-[var(--maroon)]/10 rounded-2xl text-[var(--maroon)]">
                         <Mail size={24} />
                       </div>
                       <div>
-                        <div className="text-[10px] font-mono text-zinc-600 uppercase mb-1 tracking-widest">{t.contact.masterAddress}</div>
-                        <div className="text-white font-mono text-sm md:text-xl font-bold tracking-tight">{EMAIL_DATA.display}</div>
+                        <div className="text-[10px] font-medium text-zinc-600 uppercase mb-1 tracking-widest">{t.contact.masterAddress}</div>
+                        <div className="text-white text-sm md:text-xl font-bold tracking-tight">{EMAIL_DATA.display}</div>
                       </div>
                     </div>
 
-                    <motion.button 
+                    <motion.button
                       onClick={copyToClipboard}
                       whileTap={{ scale: 0.95 }}
-                      className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-white text-black rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-cyan-400 transition-all shadow-[0_10px_20px_rgba(0,0,0,0.3)]"
+                      className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-[var(--maroon)] text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-[var(--maroon-strong)] transition-all shadow-md"
                     >
                       <AnimatePresence mode="wait">
                         {copied ? (
@@ -177,15 +171,15 @@ export default function ContactProduction() {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-between pt-10 border-t border-white/5 gap-6">
-                  <div className="flex items-center gap-3 text-zinc-600 font-mono text-[10px] uppercase">
-                    <ShieldCheck size={14} className="text-emerald-500/50" />
-                    Secure_SSL_V3
+                <div className="flex flex-col sm:flex-row items-center justify-between pt-10 border-t border-[var(--hairline)] gap-6">
+                  <div className="flex items-center gap-3 text-zinc-600 text-[10px] font-medium uppercase">
+                    <ShieldCheck size={14} className="text-emerald-600/60" />
+                    SSL
                   </div>
-                  <motion.a 
+                  <motion.a
                     href={`mailto:${EMAIL_DATA.address}`}
                     whileHover={{ x: 5 }}
-                    className="flex items-center gap-3 text-cyan-500 font-mono text-[11px] font-bold uppercase tracking-[0.2em] group"
+                    className="flex items-center gap-3 text-[var(--maroon)] text-[11px] font-bold uppercase tracking-[0.2em] group"
                   >
                     {t.contact.openMail} <Send size={14} className="group-hover:rotate-12 transition-transform" />
                   </motion.a>
@@ -202,32 +196,32 @@ export default function ContactProduction() {
           viewport={{ once: true }}
           className="mt-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         >
-          <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-2xl flex items-center gap-4">
+          <div className="p-6 bg-[var(--bg-card)] border border-[var(--hairline)] rounded-2xl flex items-center gap-4">
             <Clock className="text-zinc-700" size={20} />
             <div>
-              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">{t.contact.localTime}</p>
-              <p className="text-xs font-mono text-zinc-400">{currentTime || "SYNCING..."} WIB</p>
+              <p className="text-[9px] font-medium text-zinc-700 uppercase tracking-widest">{t.contact.localTime}</p>
+              <p className="text-xs text-zinc-400">{currentTime || "—"} WIB</p>
             </div>
           </div>
-          <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-2xl flex items-center gap-4">
+          <div className="p-6 bg-[var(--bg-card)] border border-[var(--hairline)] rounded-2xl flex items-center gap-4">
             <Globe className="text-zinc-700" size={20} />
             <div>
-              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">{t.contact.baseLocation}</p>
-              <p className="text-xs font-mono text-zinc-400">JAKARTA, ID_SYS</p>
+              <p className="text-[9px] font-medium text-zinc-700 uppercase tracking-widest">{t.contact.baseLocation}</p>
+              <p className="text-xs text-zinc-400">Jakarta, Indonesia</p>
             </div>
           </div>
-          <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-2xl flex items-center gap-4">
+          <div className="p-6 bg-[var(--bg-card)] border border-[var(--hairline)] rounded-2xl flex items-center gap-4">
             <Cpu className="text-zinc-700" size={20} />
             <div>
-              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">{t.contact.uptime}</p>
-              <p className="text-xs font-mono text-zinc-400">99.9%_OPERATIONAL</p>
+              <p className="text-[9px] font-medium text-zinc-700 uppercase tracking-widest">{t.contact.uptime}</p>
+              <p className="text-xs text-zinc-400">Senin — Sabtu</p>
             </div>
           </div>
-          <div className="p-6 bg-zinc-900/20 border border-white/5 rounded-2xl flex items-center gap-4">
-            <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
+          <div className="p-6 bg-[var(--bg-card)] border border-[var(--hairline)] rounded-2xl flex items-center gap-4">
+            <div className="h-2 w-2 rounded-full bg-emerald-600" />
             <div>
-              <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">{t.contact.latency}</p>
-              <p className="text-xs font-mono text-zinc-400">STABLE_12MS</p>
+              <p className="text-[9px] font-medium text-zinc-700 uppercase tracking-widest">{t.contact.latency}</p>
+              <p className="text-xs text-zinc-400">&lt; 24 jam</p>
             </div>
           </div>
         </motion.div>

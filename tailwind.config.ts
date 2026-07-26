@@ -12,12 +12,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        black: "#0A0A0A",
-        navy: "#0F172A",
-        primary: "#3B82F6", // Electric Blue
-        secondary: "#22D3EE", // Neon Cyan
-        accent: "#8B5CF6", // Purple Glow
-        whiteSoft: "#E5E7EB",
+        black: "#0C0A09",
+        navy: "#1C1917",
+        primary: "#8C2F39", // Maroon
+        secondary: "#C94F5D", // Maroon terang (dark mode)
+        accent: "#6D2430", // Maroon dalam
+        whiteSoft: "#F5F0EB",
+        ivory: "#FAF7F2",
+        maroon: "#8C2F39",
+      },
+      fontFamily: {
+        serif: ["var(--font-fraunces)", "Georgia", "serif"],
       },
       backgroundImage: {
         "glass-gradient": "linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01))",

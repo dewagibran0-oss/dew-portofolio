@@ -25,10 +25,10 @@ const SKILLS_DATA: Skill[] = [
   { name: "HTML", icon: SiHtml5, category: "frontend", level: "Expert", color: "#E5532F" },
   { name: "CSS", icon: SiCss3, category: "frontend", level: "Expert", color: "#2D53E5" },
   { name: "Javascript", icon: SiJavascript, category: "backend", level: "Expert", color: "#F7E02A" },
-  { name: "Next.js", icon: SiNextdotjs, category: "frontend", level: "Expert", color: "#ffffff" },
+  { name: "Next.js", icon: SiNextdotjs, category: "frontend", level: "Expert", color: "" },
   { name: "TypeScript", icon: SiTypescript, category: "frontend", level: "Expert", color: "#3178c6" },
   { name: "React.js", icon: SiReact, category: "frontend", level: "Expert", color: "#61dafb" },
-  { name: "Three.js", icon: SiThreedotjs, category: "frontend", level: "Advanced", color: "#ffffff" },
+  { name: "Three.js", icon: SiThreedotjs, category: "frontend", level: "Advanced", color: "" },
   { name: "Tailwind", icon: SiTailwindcss, category: "frontend", level: "Expert", color: "#38bdf8" },
   { name: "Node.js", icon: SiNodedotjs, category: "backend", level: "Advanced", color: "#339933" },
   { name: "PHP", icon: SiPhp, category: "backend", level: "Expert", color: "#7B7FB6" },
@@ -42,7 +42,7 @@ const SKILLS_DATA: Skill[] = [
   { name: "Docker", icon: SiDocker, category: "tools", level: "Intermediate", color: "#2496ed" },
   { name: "Git", icon: SiGit, category: "tools", level: "Expert", color: "#f05032" },
   { name: "Github", icon: SiGithub, category: "tools", level: "Expert", color: "" },
-  { name: "Vercel", icon: SiVercel, category: "tools", level: "Expert", color: "#ffffff" },
+  { name: "Vercel", icon: SiVercel, category: "tools", level: "Expert", color: "" },
   { name: "Figma", icon: SiFigma, category: "creative", level: "Expert", color: "#f24e1e" },
   { name: "Photoshop", icon: SiAdobephotoshop, category: "creative", level: "Advanced", color: "#31a8ff" },
   { name: "Premiere", icon: SiAdobepremierepro, category: "creative", level: "Advanced", color: "#ea77ff" },
@@ -83,34 +83,28 @@ const SkillCard = ({ skill }: { skill: Skill }) => {
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       className="group relative h-full"
     >
-      {/* Dynamic Glow Effect */}
-      <div 
-        className="absolute inset-0 blur-2xl rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none" 
-        style={{ backgroundColor: skill.color }}
-      />
-      
       {/* Card Content */}
-      <div className="relative h-full p-6 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-xl flex flex-col items-center md:items-start gap-5 transition-all duration-300 group-hover:border-white/20 group-hover:bg-white/[0.06]">
-        <div 
-          className="p-3 rounded-xl bg-white/5 transition-all duration-500 group-hover:scale-110"
-          style={{ color: skill.color }}
+      <div className="relative h-full p-6 rounded-2xl border border-[var(--hairline)] bg-[var(--bg-card)] flex flex-col items-center md:items-start gap-5 transition-all duration-300 group-hover:border-[var(--maroon)]/40 group-hover:shadow-md">
+        <div
+          className="p-3 rounded-xl bg-[var(--bg-section)] transition-all duration-500 group-hover:scale-110"
+          style={skill.color ? { color: skill.color } : undefined}
         >
           <Icon size={32} />
         </div>
-        
+
         <div className="text-center md:text-left">
           <h3 className="text-white font-bold tracking-tight text-lg">
             {skill.name}
           </h3>
           <div className="flex items-center justify-center md:justify-start gap-2 mt-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 group-hover:text-gray-300 transition-colors">
+            <div className="w-1.5 h-1.5 rounded-full bg-[var(--maroon)]" />
+            <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-gray-500 group-hover:text-gray-300 transition-colors">
               {t.skills.levels[skill.level] ?? skill.level}
             </p>
           </div>
         </div>
 
-        <span className="absolute top-4 right-4 text-[7px] font-mono text-white/10 group-hover:text-white/30 uppercase tracking-tighter">
+        <span className="absolute top-4 right-4 text-[7px] font-medium text-zinc-500/40 group-hover:text-zinc-500 uppercase tracking-tighter">
           {skill.category}
         </span>
       </div>
@@ -129,7 +123,7 @@ const MarqueeRow = ({
   speed?: number;
   outline?: boolean;
 }) => (
-  <div className="flex w-full overflow-hidden py-4 select-none border-y border-white/[0.05] bg-white/[0.01] -skew-y-3 md:-skew-y-2 translate-y-4">
+  <div className="flex w-full overflow-hidden py-4 select-none border-y border-[var(--hairline)] bg-[var(--bg-section)]/60 -skew-y-3 md:-skew-y-2 translate-y-4">
     <motion.div 
       animate={{ x: direction === "left" ? ["0%", "-50%"] : ["-50%", "0%"] }}
       transition={{ duration: speed, repeat: Infinity, ease: "linear" }}
@@ -144,17 +138,17 @@ const MarqueeRow = ({
                 key={`${skill.name}-${i}-${idx}`} 
                 className="flex items-center gap-6 group cursor-default"
               >
-                <Icon 
-                  className="text-5xl md:text-8xl transition-all duration-500 opacity-40 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-12" 
-                  style={{ color: skill.color }} 
+                <Icon
+                  className="text-5xl md:text-8xl transition-all duration-500 opacity-40 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-12"
+                  style={skill.color ? { color: skill.color } : undefined}
                 />
-                <span 
+                <span
                   className={`text-5xl md:text-[11rem] font-black tracking-tighter uppercase italic transition-all duration-700 ${
-                    outline 
-                      ? "text-transparent stroke-white group-hover:text-white" 
-                      : "text-white/10 group-hover:text-white group-hover:drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+                    outline
+                      ? "text-transparent group-hover:text-white"
+                      : "text-zinc-800 group-hover:text-white"
                   }`}
-                  style={outline ? { WebkitTextStroke: "1.5px rgba(255,255,255,0.3)" } : {}}
+                  style={outline ? { WebkitTextStroke: "1.5px var(--hairline)" } : {}}
                 >
                   {skill.name}
                 </span>
@@ -183,10 +177,6 @@ export default function Skills() {
       ref={scrollRef}
       className="relative w-full py-32 md:py-48 overflow-hidden bg-[var(--bg)]"
     >
-      {/* Decorative Background */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none" />
-
       <div className="max-w-[1400px] mx-auto px-6 relative z-20">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-12 mb-24">
@@ -198,7 +188,7 @@ export default function Skills() {
           >
             <h2 className="text-7xl md:text-[10rem] font-black text-white tracking-[-0.06em] leading-[0.8] uppercase">
               {t.skills.titleTop} <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-400">
+              <span className="text-[var(--maroon)] italic">
                 {t.skills.titleBottom}
               </span>
             </h2>
@@ -208,16 +198,16 @@ export default function Skills() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="flex flex-col gap-5 border-l border-white/10 pl-8"
+            className="flex flex-col gap-5 border-l border-[var(--hairline)] pl-8"
           >
             <p className="text-gray-400 text-sm md:text-lg max-w-xs leading-relaxed">
               {t.skills.desc}
             </p>
             <div className="flex gap-3">
-              <span className="px-4 py-1.5 bg-cyan-500/10 text-cyan-400 text-[10px] font-mono rounded-full border border-cyan-500/20 uppercase tracking-widest font-bold">
+              <span className="px-4 py-1.5 bg-[var(--maroon)]/10 text-[var(--maroon)] text-[10px] font-semibold rounded-full border border-[var(--maroon)]/25 uppercase tracking-widest">
                 {t.skills.tagEngineering}
               </span>
-              <span className="px-4 py-1.5 bg-purple-500/10 text-purple-400 text-[10px] font-mono rounded-full border border-purple-500/20 uppercase tracking-widest font-bold">
+              <span className="px-4 py-1.5 bg-[var(--bg-section)] text-zinc-500 text-[10px] font-semibold rounded-full border border-[var(--hairline)] uppercase tracking-widest">
                 {t.skills.tagDesign}
               </span>
             </div>
@@ -247,7 +237,7 @@ export default function Skills() {
 </div>
 
       {/* Bottom Border Decor */}
-      <div className="absolute left-0 bottom-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="absolute left-0 bottom-0 w-full h-[1px] bg-[var(--hairline)]" />
     </section>
   );
 }

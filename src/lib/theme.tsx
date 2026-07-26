@@ -23,13 +23,13 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
  * oleh inline-script di <head> (mencegah FOUC / flash of unstyled content).
  */
 function readInitialTheme(): Theme {
-  if (typeof document === "undefined") return "dark";
+  if (typeof document === "undefined") return "light";
   const attr = document.documentElement.getAttribute("data-theme");
-  return attr === "light" ? "light" : "dark";
+  return attr === "dark" ? "dark" : "light";
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
 
   // Sinkronkan state React dengan atribut yang sudah diset inline-script.
   useEffect(() => {

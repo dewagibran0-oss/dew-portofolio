@@ -1,200 +1,180 @@
 "use client";
 
-import React, { useRef, memo } from "react";
+import React, { memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import {
-  ArrowUpRight, Zap,
-  Code2, Cpu, Hash, Layers, Command, Workflow, LucideIcon
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 
 /**
  * 1. Data & Types
- * Meta netral-bahasa (tags/gambar/layout/ikon). Teks (title/category/description)
+ * Meta netral-bahasa (tags/gambar/tahun). Teks (title/category/description)
  * diambil dari dictionary via useLang agar mengikuti pilihan bahasa.
  */
 const PROJECT_META: {
   id: string;
+  year: string;
   tags: string[];
   image: string;
-  gridClass: string;
-  accent: string;
-  icon: LucideIcon;
 }[] = [
-  { id: "01", tags: ["Node.js", "Tailwind", "Three.Js"], image: "/divaphone.png", gridClass: "lg:col-span-3 lg:row-span-1", accent: "#6366f1", icon: Cpu },
-  { id: "02", tags: ["PHP", "Laravel", "MySQL"], image: "/dfs.png", gridClass: "lg:col-span-2 lg:row-span-1", accent: "#ec4899", icon: Workflow },
-  { id: "03", tags: ["PHP", "Laravel", "MySQL"], image: "/bankmini.png", gridClass: "lg:col-span-2 lg:row-span-1", accent: "#f59e0b", icon: Zap },
-  { id: "04", tags: ["Dart", "Flutter"], image: "/ttss-mobile.png", gridClass: "lg:col-span-3 lg:row-span-1", accent: "#06b6d4", icon: Code2 },
+  { id: "01", year: "2025", tags: ["Next.js", "Tailwind", "Inertia"], image: "/divaphone.png" },
+  { id: "02", year: "2025", tags: ["PHP", "PostgreSQL", "Tailwind"], image: "/dfs.png" },
+  { id: "03", year: "2024", tags: ["PHP", "Laravel", "MySQL"], image: "/bankmini.png" },
+  { id: "04", year: "2026", tags: ["Flutter", "Dart"], image: "/ttss-mobile.png" },
 ];
 
 interface ProjectItem {
   id: string;
+  year: string;
   title: string;
   category: string;
   description: string;
   tags: string[];
   image: string;
-  gridClass: string;
-  accent: string;
-  icon: LucideIcon;
 }
 
 /**
- * 2. Optimized Project Card
+ * 2. Editorial Case Row
+ * Gambar tampil penuh & jelas di "plate" ber-border (bukan background redup),
+ * teks di kolom sebelahnya. Arah bergantian kiri/kanan tiap baris; di mobile
+ * otomatis menumpuk (gambar dulu, teks di bawah).
  */
-const ProjectCard = memo(({ project }: { project: ProjectItem }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const Icon = project.icon;
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    cardRef.current.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-    cardRef.current.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-  };
-
-  return (
-    <motion.div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      className={`${project.gridClass} group relative overflow-hidden rounded-[2rem] bg-[var(--bg-card)] border border-white/5 will-change-transform`}
-    >
-      {/* Optimized Background Layer */}
-      <div className="absolute inset-0 z-0">
-        <Image 
-          src={project.image} 
-          alt={project.title} 
-          fill 
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover opacity-30 transition-transform duration-700 group-hover:scale-105"
-        />
-        {/* Gradient Overlay lebih ringan daripada filter blur */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-[var(--bg-card)]/90 to-transparent" />
-        
-        {/* Shine Effect - GPU Accelerated */}
-        <div 
-          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 will-change-contents"
-          style={{
-            background: `radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), ${project.accent}15, transparent 40%)`
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 flex flex-col h-full p-6 md:p-8">
-        <div className="flex items-start justify-between">
-          <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-white transition-transform group-hover:scale-110">
-            <Icon size={22} />
-          </div>
-          <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/30">
-            {project.category}
+const ProjectRow = memo(
+  ({ project, flip, viewLabel }: { project: ProjectItem; flip: boolean; viewLabel: string }) => {
+    return (
+      <motion.article
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-10%" }}
+        transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+        className="group grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-center"
+      >
+        {/* Image plate */}
+        <Link
+          href="/archive"
+          aria-label={project.title}
+          className={`relative block overflow-hidden rounded-2xl md:rounded-3xl border border-[var(--hairline)] bg-[var(--bg-section)] aspect-[16/10] lg:col-span-7 ${
+            flip ? "lg:order-2" : ""
+          }`}
+        >
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            sizes="(max-width: 1024px) 100vw, 58vw"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+          {/* Year chip di pojok plate */}
+          <span className="absolute top-4 left-4 md:top-5 md:left-5 px-3 py-1 rounded-full bg-[var(--bg-card)]/90 border border-[var(--hairline)] text-[10px] font-semibold tracking-[0.2em] text-zinc-500">
+            {project.year}
           </span>
-        </div>
+        </Link>
 
-        <div className="mt-auto pt-10">
-          <h4 className="text-2xl md:text-4xl font-bold text-white tracking-tighter leading-none mb-4">
+        {/* Text column */}
+        <div className={`lg:col-span-5 ${flip ? "lg:order-1" : ""}`}>
+          <div className="flex items-center gap-3 mb-4 md:mb-5">
+            <span className="h-px w-8 bg-[var(--maroon)]" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-500">
+              {project.category}
+            </span>
+          </div>
+
+          <h3 className="text-2xl md:text-4xl font-bold text-white tracking-tight leading-tight mb-4">
             {project.title}
-          </h4>
-          
-          <p className="text-xs md:text-sm text-zinc-500 line-clamp-2 mb-6">
+          </h3>
+
+          <p className="text-sm md:text-base text-zinc-500 leading-relaxed mb-6 max-w-md">
             {project.description}
           </p>
 
-          <div className="flex items-center justify-between">
-            <div className="flex gap-4">
-              {project.tags.slice(0, 2).map(tag => (
-                <span key={tag} className="flex items-center gap-1 text-[8px] font-mono text-zinc-600 uppercase">
-                  <Hash size={8} /> {tag}
-                </span>
-              ))}
-            </div>
-            
-            <Link 
-              href={`/projects/${project.id}`}
-              className="h-10 w-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white hover:text-black transition-colors"
-            >
-              <ArrowUpRight size={18} />
-            </Link>
+          <div className="flex flex-wrap gap-2 mb-7 md:mb-8">
+            {project.tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1 rounded-full border border-[var(--hairline)] bg-[var(--bg-card)] text-[10px] font-medium text-zinc-500"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
+
+          <Link
+            href="/archive"
+            className="inline-flex items-center gap-2 text-[var(--maroon)] text-xs font-bold uppercase tracking-[0.2em] group/link"
+          >
+            {viewLabel}
+            <ArrowUpRight
+              size={15}
+              className="transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+            />
+          </Link>
         </div>
-      </div>
-    </motion.div>
-  );
-});
-ProjectCard.displayName = "ProjectCard";
+      </motion.article>
+    );
+  }
+);
+ProjectRow.displayName = "ProjectRow";
 
 /**
  * 3. Main Section
  */
 export default function ProjectsSection() {
-  const containerRef = useRef(null);
   const { t } = useLang();
   const projects: ProjectItem[] = PROJECT_META.map((m) => ({
     ...m,
     ...t.projects.items[m.id],
   }));
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  // Kurangi intensitas parallax agar scroll tidak berat
-  const yBg = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
   return (
-    <section 
-      ref={containerRef}
-      className="relative w-full py-24 md:py-32 px-6 bg-[var(--bg-elevated)] overflow-hidden"
-    >
-      {/* Background Decor - Optimized with CSS purely where possible */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <motion.div 
-          style={{ y: yBg }} 
-          className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-indigo-600/[0.03] blur-[120px] rounded-full" 
-        />
-      </div>
-
-      <div className="max-w-[1400px] mx-auto relative z-10">
-        <header className="flex flex-col md:flex-row justify-between items-end gap-8 mb-24">
-          <div className="max-w-4xl">
-            <div className="flex items-center gap-3 mb-6 opacity-50">
-              <Command size={14} className="text-indigo-500" />
-              <span className="text-zinc-500 font-mono text-[9px] uppercase tracking-[0.4em]">{t.projects.tag}</span>
+    <section className="relative w-full py-24 md:py-32 px-6 bg-[var(--bg-elevated)]">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16 md:mb-24">
+          <div>
+            <div className="flex items-center gap-3 mb-5">
+              <span className="h-px w-8 bg-[var(--maroon)]" />
+              <span className="text-zinc-500 text-[10px] font-semibold uppercase tracking-[0.4em]">
+                {t.projects.tag}
+              </span>
             </div>
 
-            <h2 className="text-5xl md:text-8xl font-black text-white leading-[0.9] tracking-tighter uppercase">
-              {t.projects.titleTop} <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-200 to-zinc-700 italic">{t.projects.titleBottom}</span>
+            <h2 className="text-4xl md:text-7xl font-black text-white leading-[0.95] tracking-tight">
+              {t.projects.titleTop}{" "}
+              <span className="text-[var(--maroon)] italic">{t.projects.titleBottom}</span>
             </h2>
           </div>
 
-          <div className="md:max-w-xs border-l border-white/10 pl-6 hidden md:block">
-            <p className="text-zinc-500 text-sm leading-relaxed">
-              {t.projects.intro}
-            </p>
-          </div>
+          <p className="text-zinc-500 text-sm leading-relaxed md:max-w-xs md:border-l md:border-[var(--hairline)] md:pl-6">
+            {t.projects.intro}
+          </p>
         </header>
 
-        {/* Mosaic Grid - Optimized Auto-Rows */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 auto-rows-fr">
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+        {/* Editorial rows */}
+        <div className="flex flex-col gap-16 md:gap-28">
+          {projects.map((project, i) => (
+            <ProjectRow
+              key={project.id}
+              project={project}
+              flip={i % 2 === 1}
+              viewLabel={t.projects.view}
+            />
           ))}
         </div>
 
-        {/* Simplified Footer CTA */}
-        <footer className="mt-32 flex flex-col items-center">
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent mb-24" />
-          
-          <Link href="/archive" className="group flex items-center gap-6 pl-8 pr-2 py-2 rounded-full border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all">
-            <span className="text-white text-[10px] font-mono font-bold uppercase tracking-widest">{t.projects.explore}</span>
-            <div className="h-10 w-10 flex items-center justify-center rounded-full bg-white text-black transition-transform group-hover:rotate-12">
-              <Layers size={18} />
-            </div>
+        {/* Footer CTA */}
+        <footer className="mt-20 md:mt-32 pt-12 md:pt-16 border-t border-[var(--hairline)] flex justify-center">
+          <Link
+            href="/archive"
+            className="group inline-flex items-center gap-4 px-7 py-4 rounded-full border border-[var(--hairline)] bg-[var(--bg-card)] hover:border-[var(--maroon)] transition-colors"
+          >
+            <span className="text-white text-xs font-bold uppercase tracking-[0.2em]">
+              {t.projects.explore}
+            </span>
+            <ArrowRight
+              size={16}
+              className="text-[var(--maroon)] transition-transform duration-300 group-hover:translate-x-1"
+            />
           </Link>
         </footer>
       </div>
